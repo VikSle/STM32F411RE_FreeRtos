@@ -21,7 +21,7 @@
 *********************************************************************************************************/
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f10x.h"
+//#include "stm32f10x.h"
 #include "TouchPanel.h"
 #include "GLCD.h"
 
@@ -36,7 +36,7 @@
 void mainHY32D_init(void)
 {
   //TP_Init();
-  //LCD_Initializtion();
+  LCD_Initializtion();
   //TouchPanel_Calibrate();
 }
 

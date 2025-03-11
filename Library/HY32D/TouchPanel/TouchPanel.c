@@ -22,7 +22,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "TouchPanel.h"
-#include "systick.h"
+//#include "systick.h"
 #include "GLCD.h"
 
 /* Private variables ---------------------------------------------------------*/
@@ -51,23 +51,23 @@ Coordinate DisplaySample[3] =   {
 *******************************************************************************/
 static void ADS7843_SPI_Init(void) 
 { 
-  SPI_InitTypeDef  SPI_InitStructure;
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
-  /* DISABLE SPI1 */ 
-  SPI_Cmd(SPI1, DISABLE); 
-  /* SPI1 Config -------------------------------------------------------------*/ 
-  SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex; 
-  SPI_InitStructure.SPI_Mode = SPI_Mode_Master; 
-  SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b; 
-  SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low; 
-  SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge; 
-  SPI_InitStructure.SPI_NSS = SPI_NSS_Soft; 
-  SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_64; 
-  SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB; 
-  SPI_InitStructure.SPI_CRCPolynomial = 7; 
-  SPI_Init(SPI1, &SPI_InitStructure); 
-  /* Enable SPI1 */ 
-  SPI_Cmd(SPI1, ENABLE); 
+//  SPI_InitTypeDef  SPI_InitStructure;
+//  RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
+//  /* DISABLE SPI1 */
+//  SPI_Cmd(SPI1, DISABLE);
+//  /* SPI1 Config -------------------------------------------------------------*/
+//  SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
+//  SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
+//  SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
+//  SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
+//  SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
+//  SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
+//  SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_64;
+//  SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
+//  SPI_InitStructure.SPI_CRCPolynomial = 7;
+//  SPI_Init(SPI1, &SPI_InitStructure);
+//  /* Enable SPI1 */
+//  SPI_Cmd(SPI1, ENABLE);
 } 
 
 /*******************************************************************************
@@ -80,27 +80,27 @@ static void ADS7843_SPI_Init(void)
 *******************************************************************************/
 void TP_Init(void) 
 { 
-  GPIO_InitTypeDef GPIO_InitStructure;
-  RCC_APB2PeriphClockCmd(  RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO , ENABLE);
-  /* Configure SPI1 pins: SCK, MISO and MOSI ---------------------------------*/ 
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5  | GPIO_Pin_6 | GPIO_Pin_7; 
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;       
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(GPIOA, &GPIO_InitStructure); 
-  /* TP_CS output mode */
-  GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_4;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;		 
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
-  /* TP_IRQ inout mode */
-  GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_3 ;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
+//  GPIO_InitTypeDef GPIO_InitStructure;
+//  RCC_APB2PeriphClockCmd(  RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO , ENABLE);
+//  /* Configure SPI1 pins: SCK, MISO and MOSI ---------------------------------*/
+//  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5  | GPIO_Pin_6 | GPIO_Pin_7;
+//  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+//  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//  GPIO_Init(GPIOA, &GPIO_InitStructure);
+//  /* TP_CS output mode */
+//  GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_4;
+//  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+//  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//  GPIO_Init(GPIOA, &GPIO_InitStructure);
+//  /* TP_IRQ inout mode */
+//  GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_3 ;
+//  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ;
+//  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//  GPIO_Init(GPIOA, &GPIO_InitStructure);
   
   TP_CS(1); 
 
-  ADS7843_SPI_Init(); 
+  //ADS7843_SPI_Init();
 } 
 
 /*******************************************************************************
@@ -111,7 +111,7 @@ void TP_Init(void)
 * Return         : None
 * Attention		 : None
 *******************************************************************************/
-static void DelayUS(vu32 cnt)
+static void DelayUS(uint32_t cnt)
 {
   uint16_t i;
   for(i = 0;i<cnt;i++)
@@ -135,13 +135,13 @@ static void DelayUS(vu32 cnt)
 static void WR_CMD (uint8_t cmd)  
 { 
   /* Wait for SPI1 Tx buffer empty */ 
-  while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET); 
+  //while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET); 
   /* Send SPI1 data */ 
-  SPI_I2S_SendData(SPI1,cmd); 
+  //SPI_I2S_SendData(SPI1,cmd); 
   /* Wait for SPI1 data reception */ 
-  while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET); 
+  //while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET); 
   /* Read SPI1 received data */ 
-  SPI_I2S_ReceiveData(SPI1); 
+  //SPI_I2S_ReceiveData(SPI1); 
 } 
 
 /*******************************************************************************
@@ -156,29 +156,29 @@ static int RD_AD(void)
 { 
   unsigned short buf,temp; 
   /* Wait for SPI1 Tx buffer empty */ 
-  while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET); 
+  //while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET); 
   /* Send SPI1 data */ 
-  SPI_I2S_SendData(SPI1,0x0000); 
+  //SPI_I2S_SendData(SPI1,0x0000); 
   /* Wait for SPI1 data reception */ 
-  while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET); 
+  //while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET); 
   /* Read SPI1 received data */ 
-  temp = SPI_I2S_ReceiveData(SPI1);
+  //temp = SPI_I2S_ReceiveData(SPI1);
   
-  buf = temp << 8;
+  //buf = temp << 8;
   
-  DelayUS(1);
+  //DelayUS(1);
   
-  while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET); 
+  //while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET); 
   /* Send SPI1 data */ 
-  SPI_I2S_SendData(SPI1,0x0000); 
+  //SPI_I2S_SendData(SPI1,0x0000); 
   /* Wait for SPI1 data reception */ 
-  while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET); 
+  //while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET); 
   /* Read SPI1 received data */
   
-  temp = SPI_I2S_ReceiveData(SPI1); 
-  buf |= temp; 
-  buf >>= 3; 
-  buf &= 0xfff;
+  //temp = SPI_I2S_ReceiveData(SPI1); 
+  //buf |= temp; 
+  //buf >>= 3; 
+  //buf &= 0xfff;
   
   return buf; 
 } 
@@ -330,7 +330,7 @@ Coordinate *Read_Ads7846(void)
 	buffer[1][count] = TP_Y[0];
 	count++;  
   }
-  while( ! TP_INT_IN&& count < 9 );  /* when user clicks on the touch screen, TP_INT_IN touchscreen interrupt pin will be set to low. */
+  while( ! TP_INT_IN && count < 9 );  /* when user clicks on the touch screen, TP_INT_IN touchscreen interrupt pin will be set to low. */
   
   if( count == 9 )   /* Successful sampling 9, filtering */ 
   {  

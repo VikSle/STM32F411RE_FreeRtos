@@ -24,9 +24,14 @@
 
 /* Includes ------------------------------------------------------------------*/
 //#include "stm32f10x.h"
+#include "stm32f4xx_hal.h"
+#include "stm32f411xe.h"
 #include <stdlib.h>
+#include <stdint.h>
 
 /* Private define ------------------------------------------------------------*/
+#define DeviceCode (0x9320u)
+
 #define DISP_ORIENTATION  0  /* angle 0 90 */ 
 
 #if  ( DISP_ORIENTATION == 90 ) || ( DISP_ORIENTATION == 270 )
@@ -41,7 +46,20 @@
 
 #endif
 
-/*
+#if 0
+#define Set_Cs        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+#define Clr_Cs        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
+
+#define Set_Rs        HAL_GPIO_WritePin(GPIOC , GPIO_PIN_8, GPIO_PIN_SET);
+#define Clr_Rs        HAL_GPIO_WritePin(GPIOC , GPIO_PIN_8, GPIO_PIN_RESET);
+
+#define Set_nWr       HAL_GPIO_WritePin(GPIOC , GPIO_PIN_7, GPIO_PIN_SET);
+#define Clr_nWr       HAL_GPIO_WritePin(GPIOC , GPIO_PIN_7, GPIO_PIN_RESET);
+
+#define Set_nRd       HAL_GPIO_WritePin(GPIOC , GPIO_PIN_6, GPIO_PIN_SET);
+#define Clr_nRd       HAL_GPIO_WritePin(GPIOC , GPIO_PIN_6, GPIO_PIN_RESET);
+
+#elif 0
 #define Set_Cs        GPIO_SetBits(GPIOC , GPIO_Pin_9);
 #define Clr_Cs        GPIO_ResetBits(GPIOC , GPIO_Pin_9);
 
@@ -53,8 +71,8 @@
 
 #define Set_nRd       GPIO_SetBits(GPIOC , GPIO_Pin_6);
 #define Clr_nRd       GPIO_ResetBits(GPIOC , GPIO_Pin_6);
-*/
 
+#else
 #define Set_Cs        GPIOC->ODR  |= ( 1<<9 );
 #define Clr_Cs        GPIOC->ODR  &= ~( 1<<9 );
 
@@ -66,6 +84,7 @@
 
 #define Set_nRd       GPIOC->ODR  |= ( 1<<6 );
 #define Clr_nRd       GPIOC->ODR  &= ~( 1<<6 );
+#endif
 
 /* LCD color */
 #define White          0xFFFF

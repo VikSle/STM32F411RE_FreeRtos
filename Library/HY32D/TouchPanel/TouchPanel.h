@@ -57,9 +57,9 @@ extern Coordinate  display ;
 #define	CHX 	0x90 	/* channel Y+ selection command */	
 #define	CHY 	0xd0	/* channel X+ selection command*/
 
-#define TP_CS(x)	x ? GPIO_SetBits(GPIOA,GPIO_Pin_4): GPIO_ResetBits(GPIOA,GPIO_Pin_4)
+#define TP_CS(x)	//x ? GPIO_SetBits(GPIOA,GPIO_Pin_4): GPIO_ResetBits(GPIOA,GPIO_Pin_4)
 
-#define TP_INT_IN   GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_3)
+#define TP_INT_IN   0//GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_3)
 
 /* Private function prototypes -----------------------------------------------*/				
 void TP_Init(void);	

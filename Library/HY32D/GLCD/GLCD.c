@@ -40,38 +40,38 @@ static void LCD_Configuration(void)
         /* If you are not use STM32, you must change it */
 
 	GPIO_InitTypeDef GPIO_InitStructure;
-	
+
 	/* Enable GPIOC and GPIOE clocks */
-	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOE, ENABLE);  
-	          
-/* 
+//	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOE, ENABLE);
+
+/*
     PE.00(D0), PE.01(D1), PE.02(D2), PE.03(D3), PE.04(D4), PE.05(D5), PE.06(D6), PE.07(D7), PE.08(D8)
     PE.09(D9), PE.10(D10), PE.11(D11), PE.12(D12), PE.13(D13), PE.14(D14), PE.15(D15)   */
-/* 
+/*
         /* setting the IO to output mode */
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_Init(GPIOE, &GPIO_InitStructure);
-	
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+//	GPIO_Init(GPIOE, &GPIO_InitStructure);
+
 	/* PC.08(RS), PC.07(WR), PC.06(RD) */
 
         /* setting the IO to output mode */
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_Init(GPIOC, &GPIO_InitStructure);
-	
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+//	GPIO_Init(GPIOC, &GPIO_InitStructure);
+
 	/* PC.09(CS)*/
 
         /* setting the IO to output mode */
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_Init(GPIOC, &GPIO_InitStructure);
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+//	GPIO_Init(GPIOC, &GPIO_InitStructure);
 }
 
 
@@ -132,44 +132,44 @@ unsigned short LCD_ReadData(void)
 
 	unsigned short value;
 
-	Set_Rs;  /* RS high */ 
+	Set_Rs;  /* RS high */
 	Set_nWr; /* Wr high */
-	Clr_nRd; /* Rd low */ 
+	Clr_nRd; /* Rd low */
 
-/* 
+/*
     PE.00(D0), PE.01(D1), PE.02(D2), PE.03(D3), PE.04(D4), PE.05(D5), PE.06(D6), PE.07(D7), PE.08(D8)
     PE.09(D9), PE.10(D10), PE.11(D11), PE.12(D12), PE.13(D13), PE.14(D14), PE.15(D15)   */
-/* 
+/*
 
     /* setting the IO to input mode */
 
-    GPIO_InitTypeDef GPIO_InitStructure; 
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-    GPIO_Init(GPIOE, &GPIO_InitStructure);
-    
+//    GPIO_InitTypeDef GPIO_InitStructure;
+//    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;
+//    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+//    GPIO_Init(GPIOE, &GPIO_InitStructure);
+
     /* read data */
-    value = GPIO_ReadInputData(GPIOE);
-    value = GPIO_ReadInputData(GPIOE);
-    
+//    value = GPIO_ReadInputData(GPIOE);
+//    value = GPIO_ReadInputData(GPIOE);
+
     /* Read twice to ensure correct data */
 
     /* read data OK */
 
-/*  
+/*
     PE.00(D0), PE.01(D1), PE.02(D2), PE.03(D3), PE.04(D4), PE.05(D5), PE.06(D6), PE.07(D7), PE.08(D8)
-    PE.09(D9), PE.10(D10), PE.11(D11), PE.12(D12), PE.13(D13), PE.14(D14), PE.15(D15)   
+    PE.09(D9), PE.10(D10), PE.11(D11), PE.12(D12), PE.13(D13), PE.14(D14), PE.15(D15)
 */
-    
+
     /* setting the IO to output mode */
 
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    GPIO_Init(GPIOE, &GPIO_InitStructure);
+//    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;
+//    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+//    GPIO_Init(GPIOE, &GPIO_InitStructure);
 
-    Set_nRd;   /* Rd high */ 
+    Set_nRd;   /* Rd high */
 
     return value;  /* return data */
 }
