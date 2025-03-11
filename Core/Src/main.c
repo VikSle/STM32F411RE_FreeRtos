@@ -109,7 +109,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  mainHY32D_init();
   /* USER CODE END 2 */
 
   /* Init scheduler */

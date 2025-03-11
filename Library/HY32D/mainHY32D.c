@@ -33,19 +33,22 @@
 * Return         : None
 * Attention		 : None
 *******************************************************************************/
-int main(void)
+void mainHY32D_init(void)
 {
-  TP_Init();
-  LCD_Initializtion();
-  TouchPanel_Calibrate();
-  /* Infinite loop */
-  while (1)	
-  {
-    getDisplayPoint(&display, Read_Ads7846(), &matrix ) ;
-    TP_DrawPoint(display.x,display.y);
-  }
+  //TP_Init();
+  //LCD_Initializtion();
+  //TouchPanel_Calibrate();
 }
 
+void mainHY32D_main(void)
+{
+  /* Infinite loop */
+  //while (1)
+  //{
+	//getDisplayPoint(&display, Read_Ads7846(), &matrix ) ;
+	//TP_DrawPoint(display.x,display.y);
+  //}
+}
 
 #ifdef  USE_FULL_ASSERT
 

@@ -24,7 +24,8 @@
 #define _TOUCHPANEL_H_
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f10x.h"
+//#include "stm32f10x.h"
+#include "main.h"
 
 /* Private typedef -----------------------------------------------------------*/
 typedef	struct POINT 

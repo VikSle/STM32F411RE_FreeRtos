@@ -29,7 +29,7 @@
 Matrix matrix ;
 Coordinate  display ;
 
-/* LCD coordinates corresponding sampling AD value. for example£ºLCD coordinates 45, 45 X Y sampling ADC value 3388, 920 */	
+/* LCD coordinates corresponding sampling AD value. for exampleÂ£ÂºLCD coordinates 45, 45 X Y sampling ADC value 3388, 920 */	
 Coordinate ScreenSample[3];
 /* LCD Coordinate */
 Coordinate DisplaySample[3] =   {
@@ -433,7 +433,7 @@ FunctionalState setCalibrationMatrix( Coordinate * displayPtr,
 {
 
   FunctionalState retTHRESHOLD = ENABLE ;
-  /* K£½(X0£­X2) (Y1£­Y2)£­(X1£­X2) (Y0£­Y2) */
+  /* KÂ£Å“(X0Â£Â­X2) (Y1Â£Â­Y2)Â£Â­(X1Â£Â­X2) (Y0Â£Â­Y2) */
   matrixPtr->Divider = ((screenPtr[0].x - screenPtr[2].x) * (screenPtr[1].y - screenPtr[2].y)) - 
                        ((screenPtr[1].x - screenPtr[2].x) * (screenPtr[0].y - screenPtr[2].y)) ;
   if( matrixPtr->Divider == 0 )
@@ -442,23 +442,23 @@ FunctionalState setCalibrationMatrix( Coordinate * displayPtr,
   }
   else
   {
-    /* A£½((XD0£­XD2) (Y1£­Y2)£­(XD1£­XD2) (Y0£­Y2))£¯K	*/
+    /* AÂ£Å“((XD0Â£Â­XD2) (Y1Â£Â­Y2)Â£Â­(XD1Â£Â­XD2) (Y0Â£Â­Y2))Â£Â¯K	*/
     matrixPtr->An = ((displayPtr[0].x - displayPtr[2].x) * (screenPtr[1].y - screenPtr[2].y)) - 
                     ((displayPtr[1].x - displayPtr[2].x) * (screenPtr[0].y - screenPtr[2].y)) ;
-	/* B£½((X0£­X2) (XD1£­XD2)£­(XD0£­XD2) (X1£­X2))£¯K	*/
+	/* BÂ£Å“((X0Â£Â­X2) (XD1Â£Â­XD2)Â£Â­(XD0Â£Â­XD2) (X1Â£Â­X2))Â£Â¯K	*/
     matrixPtr->Bn = ((screenPtr[0].x - screenPtr[2].x) * (displayPtr[1].x - displayPtr[2].x)) - 
                     ((displayPtr[0].x - displayPtr[2].x) * (screenPtr[1].x - screenPtr[2].x)) ;
-    /* C£½(Y0(X2XD1£­X1XD2)+Y1(X0XD2£­X2XD0)+Y2(X1XD0£­X0XD1))£¯K */
+    /* CÂ£Å“(Y0(X2XD1Â£Â­X1XD2)+Y1(X0XD2Â£Â­X2XD0)+Y2(X1XD0Â£Â­X0XD1))Â£Â¯K */
     matrixPtr->Cn = (screenPtr[2].x * displayPtr[1].x - screenPtr[1].x * displayPtr[2].x) * screenPtr[0].y +
                     (screenPtr[0].x * displayPtr[2].x - screenPtr[2].x * displayPtr[0].x) * screenPtr[1].y +
                     (screenPtr[1].x * displayPtr[0].x - screenPtr[0].x * displayPtr[1].x) * screenPtr[2].y ;
-    /* D£½((YD0£­YD2) (Y1£­Y2)£­(YD1£­YD2) (Y0£­Y2))£¯K	*/
+    /* DÂ£Å“((YD0Â£Â­YD2) (Y1Â£Â­Y2)Â£Â­(YD1Â£Â­YD2) (Y0Â£Â­Y2))Â£Â¯K	*/
     matrixPtr->Dn = ((displayPtr[0].y - displayPtr[2].y) * (screenPtr[1].y - screenPtr[2].y)) - 
                     ((displayPtr[1].y - displayPtr[2].y) * (screenPtr[0].y - screenPtr[2].y)) ;
-    /* E£½((X0£­X2) (YD1£­YD2)£­(YD0£­YD2) (X1£­X2))£¯K	*/
+    /* EÂ£Å“((X0Â£Â­X2) (YD1Â£Â­YD2)Â£Â­(YD0Â£Â­YD2) (X1Â£Â­X2))Â£Â¯K	*/
     matrixPtr->En = ((screenPtr[0].x - screenPtr[2].x) * (displayPtr[1].y - displayPtr[2].y)) - 
                     ((displayPtr[0].y - displayPtr[2].y) * (screenPtr[1].x - screenPtr[2].x)) ;
-    /* F£½(Y0(X2YD1£­X1YD2)+Y1(X0YD2£­X2YD0)+Y2(X1YD0£­X0YD1))£¯K */
+    /* FÂ£Å“(Y0(X2YD1Â£Â­X1YD2)+Y1(X0YD2Â£Â­X2YD0)+Y2(X1YD0Â£Â­X0YD1))Â£Â¯K */
     matrixPtr->Fn = (screenPtr[2].x * displayPtr[1].y - screenPtr[1].x * displayPtr[2].y) * screenPtr[0].y +
                     (screenPtr[0].x * displayPtr[2].y - screenPtr[2].x * displayPtr[0].y) * screenPtr[1].y +
                     (screenPtr[1].x * displayPtr[0].y - screenPtr[0].x * displayPtr[1].y) * screenPtr[2].y ;
