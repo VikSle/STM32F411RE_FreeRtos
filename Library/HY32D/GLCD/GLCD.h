@@ -73,8 +73,8 @@
 #define Clr_nRd       GPIO_ResetBits(GPIOC , GPIO_Pin_6);
 
 #else
-#define Set_Cs        GPIOC->ODR  |= ( 1<<9 );
-#define Clr_Cs        GPIOC->ODR  &= ~( 1<<9 );
+#define Set_Cs        GPIOA->ODR  |= ( 1<<9 ); //GPIOC->ODR  |= ( 1<<9 );
+#define Clr_Cs        GPIOA->ODR  &= ~( 1<<9 ); //GPIOC->ODR  &= ~( 1<<9 );
 
 #define Set_Rs        GPIOC->ODR  |= ( 1<<8 );
 #define Clr_Rs        GPIOC->ODR  &= ~( 1<<8 );

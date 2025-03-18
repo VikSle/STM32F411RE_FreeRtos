@@ -22,6 +22,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "GLCD.h" 
 #include "AsciiLib.h"
+#include "main.h"
+#include "stm32f4xx_hal_gpio.h"
 
 
 /* Program is based on the STM32 MCU */
@@ -39,7 +41,7 @@ static void LCD_Configuration(void)
 {
         /* If you are not use STM32, you must change it */
 
-	GPIO_InitTypeDef GPIO_InitStructure;
+//	GPIO_InitTypeDef GPIO_InitStructure;
 
 	/* Enable GPIOC and GPIOE clocks */
 //	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOE, ENABLE);
@@ -91,8 +93,26 @@ void LCD_WriteIndex(unsigned short index)
 	Set_nRd;  /* RD high */
 	
         /* write data */
-	GPIOE->ODR = index;	 /* GPIO_Write(GPIOE,index); */
+//	GPIOE->ODR = index;	 /* GPIO_Write(GPIOE,index); */
 	
+	HAL_GPIO_WritePin(D00_GPIO_Port, D00_Pin, (GPIO_PinState)(index&0x01));
+	HAL_GPIO_WritePin(D01_GPIO_Port, D01_Pin, (GPIO_PinState)((index>>1)&0x01));
+	HAL_GPIO_WritePin(D02_GPIO_Port, D02_Pin, (GPIO_PinState)((index>>2)&0x01));
+	HAL_GPIO_WritePin(D03_GPIO_Port, D03_Pin, (GPIO_PinState)((index>>3)&0x01));
+	HAL_GPIO_WritePin(D04_GPIO_Port, D04_Pin, (GPIO_PinState)((index>>4)&0x01));
+	HAL_GPIO_WritePin(D05_GPIO_Port, D05_Pin, (GPIO_PinState)((index>>5)&0x01));
+	HAL_GPIO_WritePin(D06_GPIO_Port, D06_Pin, (GPIO_PinState)((index>>6)&0x01));
+	HAL_GPIO_WritePin(D07_GPIO_Port, D07_Pin, (GPIO_PinState)((index>>7)&0x01));
+	HAL_GPIO_WritePin(D08_GPIO_Port, D08_Pin, (GPIO_PinState)((index>>8)&0x01));
+	HAL_GPIO_WritePin(D09_GPIO_Port, D09_Pin, (GPIO_PinState)((index>>9)&0x01));
+	HAL_GPIO_WritePin(D10_GPIO_Port, D10_Pin, (GPIO_PinState)((index>>10)&0x01));
+	HAL_GPIO_WritePin(D11_GPIO_Port, D11_Pin, (GPIO_PinState)((index>>11)&0x01));
+	HAL_GPIO_WritePin(D12_GPIO_Port, D12_Pin, (GPIO_PinState)((index>>12)&0x01));
+	HAL_GPIO_WritePin(D13_GPIO_Port, D13_Pin, (GPIO_PinState)((index>>13)&0x01));
+	HAL_GPIO_WritePin(D14_GPIO_Port, D14_Pin, (GPIO_PinState)((index>>14)&0x01));
+	HAL_GPIO_WritePin(D15_GPIO_Port, D15_Pin, (GPIO_PinState)((index>>15)&0x01));
+
+
 	Clr_nWr;  /* Wr low */
 	Set_nWr;  /* Wr high */
 }
@@ -112,7 +132,23 @@ void LCD_WriteData(unsigned short data)
 	Set_Rs;  /* RS high */
 	
         /* write data */
-	GPIOE->ODR = data;	 /* GPIO_Write(GPIOE,data); */
+//	GPIOE->ODR = data;	 /* GPIO_Write(GPIOE,data); */
+	HAL_GPIO_WritePin(D00_GPIO_Port, D00_Pin, (GPIO_PinState)(data&0x01));
+	HAL_GPIO_WritePin(D01_GPIO_Port, D01_Pin, (GPIO_PinState)((data>>1)&0x01));
+	HAL_GPIO_WritePin(D02_GPIO_Port, D02_Pin, (GPIO_PinState)((data>>2)&0x01));
+	HAL_GPIO_WritePin(D03_GPIO_Port, D03_Pin, (GPIO_PinState)((data>>3)&0x01));
+	HAL_GPIO_WritePin(D04_GPIO_Port, D04_Pin, (GPIO_PinState)((data>>4)&0x01));
+	HAL_GPIO_WritePin(D05_GPIO_Port, D05_Pin, (GPIO_PinState)((data>>5)&0x01));
+	HAL_GPIO_WritePin(D06_GPIO_Port, D06_Pin, (GPIO_PinState)((data>>6)&0x01));
+	HAL_GPIO_WritePin(D07_GPIO_Port, D07_Pin, (GPIO_PinState)((data>>7)&0x01));
+	HAL_GPIO_WritePin(D08_GPIO_Port, D08_Pin, (GPIO_PinState)((data>>8)&0x01));
+	HAL_GPIO_WritePin(D09_GPIO_Port, D09_Pin, (GPIO_PinState)((data>>9)&0x01));
+	HAL_GPIO_WritePin(D10_GPIO_Port, D10_Pin, (GPIO_PinState)((data>>10)&0x01));
+	HAL_GPIO_WritePin(D11_GPIO_Port, D11_Pin, (GPIO_PinState)((data>>11)&0x01));
+	HAL_GPIO_WritePin(D12_GPIO_Port, D12_Pin, (GPIO_PinState)((data>>12)&0x01));
+	HAL_GPIO_WritePin(D13_GPIO_Port, D13_Pin, (GPIO_PinState)((data>>13)&0x01));
+	HAL_GPIO_WritePin(D14_GPIO_Port, D14_Pin, (GPIO_PinState)((data>>14)&0x01));
+	HAL_GPIO_WritePin(D15_GPIO_Port, D15_Pin, (GPIO_PinState)((data>>15)&0x01));
 	
 	Clr_nWr;  /* Wr low */ 
 	Set_nWr;  /* Wr high */
@@ -136,6 +172,8 @@ unsigned short LCD_ReadData(void)
 	Set_nWr; /* Wr high */
 	Clr_nRd; /* Rd low */
 
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
+
 /*
     PE.00(D0), PE.01(D1), PE.02(D2), PE.03(D3), PE.04(D4), PE.05(D5), PE.06(D6), PE.07(D7), PE.08(D8)
     PE.09(D9), PE.10(D10), PE.11(D11), PE.12(D12), PE.13(D13), PE.14(D14), PE.15(D15)   */
@@ -149,9 +187,66 @@ unsigned short LCD_ReadData(void)
 //    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 //    GPIO_Init(GPIOE, &GPIO_InitStructure);
 
+	  GPIO_InitStruct.Pin = D00_Pin|D01_Pin|D02_Pin|D10_Pin
+	                          |D12_Pin|D13_Pin|D14_Pin|D15_Pin
+	                          |D05_Pin|D06_Pin|D07_Pin|D08_Pin
+	                          |D09_Pin;
+	  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	  GPIO_InitStruct.Pull = GPIO_NOPULL;
+	  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+	  GPIO_InitStruct.Pin = D03_Pin|D04_Pin;
+	  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	  GPIO_InitStruct.Pull = GPIO_NOPULL;
+	  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+	  GPIO_InitStruct.Pin = D11_Pin;
+	  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	  GPIO_InitStruct.Pull = GPIO_NOPULL;
+	  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+
+
     /* read data */
 //    value = GPIO_ReadInputData(GPIOE);
 //    value = GPIO_ReadInputData(GPIOE);
+
+	  value=
+	 ((HAL_GPIO_ReadPin(D00_GPIO_Port, D00_Pin)&0x1)    )|
+	 ((HAL_GPIO_ReadPin(D01_GPIO_Port, D01_Pin)&0x1)<<1 )|
+	 ((HAL_GPIO_ReadPin(D02_GPIO_Port, D02_Pin)&0x1)<<2 )|
+	 ((HAL_GPIO_ReadPin(D03_GPIO_Port, D03_Pin)&0x1)<<3 )|
+	 ((HAL_GPIO_ReadPin(D04_GPIO_Port, D04_Pin)&0x1)<<4 )|
+	 ((HAL_GPIO_ReadPin(D05_GPIO_Port, D05_Pin)&0x1)<<5 )|
+	 ((HAL_GPIO_ReadPin(D06_GPIO_Port, D06_Pin)&0x1)<<6 )|
+	 ((HAL_GPIO_ReadPin(D07_GPIO_Port, D07_Pin)&0x1)<<7 )|
+	 ((HAL_GPIO_ReadPin(D08_GPIO_Port, D08_Pin)&0x1)<<8 )|
+	 ((HAL_GPIO_ReadPin(D09_GPIO_Port, D09_Pin)&0x1)<<9 )|
+	 ((HAL_GPIO_ReadPin(D10_GPIO_Port, D10_Pin)&0x1)<<10)|
+	 ((HAL_GPIO_ReadPin(D11_GPIO_Port, D11_Pin)&0x1)<<11)|
+	 ((HAL_GPIO_ReadPin(D12_GPIO_Port, D12_Pin)&0x1)<<12)|
+	 ((HAL_GPIO_ReadPin(D13_GPIO_Port, D13_Pin)&0x1)<<13)|
+	 ((HAL_GPIO_ReadPin(D14_GPIO_Port, D14_Pin)&0x1)<<14)|
+	 ((HAL_GPIO_ReadPin(D15_GPIO_Port, D15_Pin)&0x1)<<15);
+
+	  value=
+	 ((HAL_GPIO_ReadPin(D00_GPIO_Port, D00_Pin)&0x1)    )|
+	 ((HAL_GPIO_ReadPin(D01_GPIO_Port, D01_Pin)&0x1)<<1 )|
+	 ((HAL_GPIO_ReadPin(D02_GPIO_Port, D02_Pin)&0x1)<<2 )|
+	 ((HAL_GPIO_ReadPin(D03_GPIO_Port, D03_Pin)&0x1)<<3 )|
+	 ((HAL_GPIO_ReadPin(D04_GPIO_Port, D04_Pin)&0x1)<<4 )|
+	 ((HAL_GPIO_ReadPin(D05_GPIO_Port, D05_Pin)&0x1)<<5 )|
+	 ((HAL_GPIO_ReadPin(D06_GPIO_Port, D06_Pin)&0x1)<<6 )|
+	 ((HAL_GPIO_ReadPin(D07_GPIO_Port, D07_Pin)&0x1)<<7 )|
+	 ((HAL_GPIO_ReadPin(D08_GPIO_Port, D08_Pin)&0x1)<<8 )|
+	 ((HAL_GPIO_ReadPin(D09_GPIO_Port, D09_Pin)&0x1)<<9 )|
+	 ((HAL_GPIO_ReadPin(D10_GPIO_Port, D10_Pin)&0x1)<<10)|
+	 ((HAL_GPIO_ReadPin(D11_GPIO_Port, D11_Pin)&0x1)<<11)|
+	 ((HAL_GPIO_ReadPin(D12_GPIO_Port, D12_Pin)&0x1)<<12)|
+	 ((HAL_GPIO_ReadPin(D13_GPIO_Port, D13_Pin)&0x1)<<13)|
+	 ((HAL_GPIO_ReadPin(D14_GPIO_Port, D14_Pin)&0x1)<<14)|
+	 ((HAL_GPIO_ReadPin(D15_GPIO_Port, D15_Pin)&0x1)<<15);
+
 
     /* Read twice to ensure correct data */
 
@@ -168,6 +263,39 @@ unsigned short LCD_ReadData(void)
 //    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 //    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 //    GPIO_Init(GPIOE, &GPIO_InitStructure);
+
+    HAL_GPIO_WritePin(GPIOC, D03_Pin|D04_Pin|RD_Pin|WR_Pin
+                            |RS_Pin, GPIO_PIN_RESET);
+
+    HAL_GPIO_WritePin(GPIOA, CS_Pin|D11_Pin, GPIO_PIN_RESET);
+
+    HAL_GPIO_WritePin(GPIOB, D00_Pin|D01_Pin|D02_Pin|D10_Pin
+                            |D12_Pin|D13_Pin|D14_Pin|D15_Pin
+                            |D05_Pin|D06_Pin|D07_Pin|D08_Pin
+                            |D09_Pin, GPIO_PIN_RESET);
+
+    GPIO_InitStruct.Pin = D03_Pin|D04_Pin|RD_Pin|WR_Pin
+                            |RS_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = D00_Pin|D01_Pin|D02_Pin|D10_Pin
+                            |D12_Pin|D13_Pin|D14_Pin|D15_Pin
+                            |D05_Pin|D06_Pin|D07_Pin|D08_Pin
+                            |D09_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = CS_Pin|D11_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
 
     Set_nRd;   /* Rd high */
 
@@ -277,7 +405,8 @@ void LCD_Initializtion(void)
 	LCD_ID = LCD_ReadReg(0x0000);		/* read the LCD ID, if Controller is ILI9320, The ID value is 0x9320 */
 	
 	
-	if( DeviceCode == 0x9320 || DeviceCode == 0x9300 )
+	//if( DeviceCode == 0x9320 || DeviceCode == 0x9300 )
+	if( LCD_ID == 0x9320 || LCD_ID == 0x9300 )
 	{
 	    LCD_WriteReg(0x00,0x0000);
 	    LCD_WriteReg(0x01,0x0100);	/* Driver Output Contral */
@@ -292,9 +421,9 @@ void LCD_Initializtion(void)
 	    LCD_WriteReg(0x0d,0x0000);	/* Frame Maker Position */
 	    LCD_WriteReg(0x0f,0x0000);	/* Extern Display Interface Contral 2. */
 		
-	    delay_ms(100);  /* delay 100 ms */		
+	    HAL_Delay(100);//delay_ms(100);  /* delay 100 ms */
 	    LCD_WriteReg(0x07,0x0101);	/* Display Contral */
-	    delay_ms(100);  /* delay 100 ms */		
+	    HAL_Delay(100);//delay_ms(100);  /* delay 100 ms */
 	
 	    LCD_WriteReg(0x10,(1<<12)|(0<<8)|(1<<7)|(1<<6)|(0<<4));	/* Power Control 1.(0x16b0)	*/
 	    LCD_WriteReg(0x11,0x0007);								/* Power Control 2 */
@@ -334,7 +463,7 @@ void LCD_Initializtion(void)
               /* fatal error */
               while(1);
         }					
-    delay_ms(50);   /* delay 50 ms */		
+	HAL_Delay(50);//delay_ms(50);   /* delay 50 ms */
 }
 
 /*******************************************************************************
@@ -552,7 +681,7 @@ void PutChar( uint16_t Xpos, uint16_t Ypos, uint8_t ASCI, uint16_t charColor, ui
         tmp_char = buffer[i];
         for( j=0; j<8; j++ )
         {
-            if( (tmp_char >> 7 - j) & 0x01 == 0x01 )
+            if( (((tmp_char >> 7) - j) & 0x01) == 0x01 )
             {
                 LCD_SetPoint( Xpos + j, Ypos + i, charColor );  /* Character color */
             }
