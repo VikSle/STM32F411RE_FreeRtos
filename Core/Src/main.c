@@ -59,7 +59,7 @@ const osThreadAttr_t Task02_attributes = {
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* USER CODE BEGIN PV */
-
+extern void ILI9341_myInit(void);
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -109,6 +109,8 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+
+  ILI9341_myInit();
 
   /* USER CODE END 2 */
 
@@ -259,7 +261,13 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOC, LCD_RESET_Pin|LCD_CS_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(LCD_DCX_GPIO_Port, LCD_DCX_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : B1_Pin */
   GPIO_InitStruct.Pin = B1_Pin;
@@ -267,12 +275,26 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
+  /*Configure GPIO pins : LCD_RESET_Pin LCD_CS_Pin */
+  GPIO_InitStruct.Pin = LCD_RESET_Pin|LCD_CS_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
   /*Configure GPIO pin : LD2_Pin */
   GPIO_InitStruct.Pin = LD2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : LCD_DCX_Pin */
+  GPIO_InitStruct.Pin = LCD_DCX_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  HAL_GPIO_Init(LCD_DCX_GPIO_Port, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
   HAL_NVIC_SetPriority(EXTI15_10_IRQn, 5, 0);
@@ -315,8 +337,20 @@ void StartTask01(void *argument)
   /* Infinite loop */
   for(;;)
   {
-	Task_action('1'); //sign of life by LED toggle or sending '1' to swo
-	HAL_Delay(1000); // remain active for 0.5 second
+		Task_action('1'); //sign of life by LED toggle or sending '1' to swo
+		HAL_Delay(1000); // remain active for 0.5 second
+
+		ILI9341_Fill_Screen(WHITE);
+		ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
+//		ILI9341_Draw_Text("FPS TEST, 40 loop 2 screens", 10, 10, BLACK, 1, WHITE);
+		ILI9341_Draw_Text("KOCHAM CIE PATI <3", 10, 10, BLACK, 2, WHITE);
+		HAL_Delay(2000);
+		ILI9341_Fill_Screen(ORANGE);
+		ILI9341_Draw_Text("KOCHAM CIE PATI <3", 10, 10, BLACK, 2, WHITE);
+		HAL_Delay(2000);
+		ILI9341_Fill_Screen(PINK);
+		ILI9341_Draw_Text("KOCHAM CIE PATI <3", 10, 10, BLACK, 2, WHITE);
+
   }
   /* USER CODE END 5 */
 }

@@ -1,9 +1,8 @@
-/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file           : main.h
-  * @brief          : Header for main.c file.
-  *                   This file contains the common defines of the application.
+  * File Name          : Target/lcd_conf.h
+  * Description        : This file provides code for the configuration
+  *                      of the LCD instances.
   ******************************************************************************
   * @attention
   *
@@ -16,31 +15,48 @@
   *
   ******************************************************************************
   */
-/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __MAIN_H
-#define __MAIN_H
+#ifndef __LCD_CONF_H__
+#define __LCD_CONF_H__
 
 #ifdef __cplusplus
-extern "C" {
+ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4xx_hal.h"
+#include "stm32f4xx.h"
+#include "stm32f4xx_nucleo_bus.h"
 
-#include "lcd_io.h"
-/* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "ILI9341_STM32_Driver.h"
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
+/* BUS IO Instance handler */
+extern  SPI_HandleTypeDef                   hspi2;
+
 /* USER CODE BEGIN ET */
 
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
+/* Number of LCD instances */
+#define LCD_INSTANCES_NBR                   1U
+
+/* BUS IO Instance handlers */
+#define hLCDSPI                             hspi2
+
+/* BUS IO functions */
+#define LCD_SPI_Init                        BSP_SPI2_Init
+#define LCD_SPI_DeInit                      BSP_SPI2_DeInit
+#define LCD_SPI_Send                        BSP_SPI2_Send
+#define LCD_SPI_Recv                        BSP_SPI2_Recv
+#define LCD_SPI_SendRecv                    BSP_SPI2_SendRecv
+#define LCD_SPI_Send_DMA(td, ln)            BSP_ERROR_FEATURE_NOT_SUPPORTED
+#define LCD_SPI_Recv_DMA(rd, ln)            BSP_ERROR_FEATURE_NOT_SUPPORTED
+#define LCD_SPI_SendRecv_DMA(td, rd, ln)    BSP_ERROR_FEATURE_NOT_SUPPORTED
+
 /* USER CODE BEGIN EC */
 
 /* USER CODE END EC */
@@ -51,41 +67,18 @@ extern "C" {
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
-void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */
 
-/* Private defines -----------------------------------------------------------*/
-#define B1_Pin GPIO_PIN_13
-#define B1_GPIO_Port GPIOC
-#define B1_EXTI_IRQn EXTI15_10_IRQn
-#define LCD_RESET_Pin GPIO_PIN_0
-#define LCD_RESET_GPIO_Port GPIOC
-#define LCD_CS_Pin GPIO_PIN_1
-#define LCD_CS_GPIO_Port GPIOC
-#define USART_TX_Pin GPIO_PIN_2
-#define USART_TX_GPIO_Port GPIOA
-#define USART_RX_Pin GPIO_PIN_3
-#define USART_RX_GPIO_Port GPIOA
-#define LD2_Pin GPIO_PIN_5
-#define LD2_GPIO_Port GPIOA
-#define LCD_DCX_Pin GPIO_PIN_0
-#define LCD_DCX_GPIO_Port GPIOB
-#define TMS_Pin GPIO_PIN_13
-#define TMS_GPIO_Port GPIOA
-#define TCK_Pin GPIO_PIN_14
-#define TCK_GPIO_Port GPIOA
-#define SWO_Pin GPIO_PIN_3
-#define SWO_GPIO_Port GPIOB
-
-/* USER CODE BEGIN Private defines */
-extern SPI_HandleTypeDef hspi2;
-/* USER CODE END Private defines */
-
 #ifdef __cplusplus
 }
 #endif
+#endif /* __LCD_CONF_H__ */
 
-#endif /* __MAIN_H */
+/**
+  * @}
+  */
+
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
