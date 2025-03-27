@@ -73,6 +73,16 @@ void Error_Handler(void);
 #define LD2_GPIO_Port GPIOA
 #define LCD_DCX_Pin GPIO_PIN_0
 #define LCD_DCX_GPIO_Port GPIOB
+#define T_CS_Pin GPIO_PIN_1
+#define T_CS_GPIO_Port GPIOB
+#define T_CLK_Pin GPIO_PIN_2
+#define T_CLK_GPIO_Port GPIOB
+#define T_IRQ_Pin GPIO_PIN_13
+#define T_IRQ_GPIO_Port GPIOB
+#define T_MOSI_Pin GPIO_PIN_14
+#define T_MOSI_GPIO_Port GPIOB
+#define T_MISO_Pin GPIO_PIN_15
+#define T_MISO_GPIO_Port GPIOB
 #define TMS_Pin GPIO_PIN_13
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14

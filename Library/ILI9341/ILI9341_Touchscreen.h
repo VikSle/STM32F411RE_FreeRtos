@@ -83,22 +83,23 @@ if(TP_Touchpad_Pressed())
 #define TOUCH_H
 
 #include "stm32f4xx_hal.h"
+#include "main.h"
 
 
-//#define TP_CLK_PORT								GPIOE
-//#define TP_CLK_PIN								T_CLK_Pin
-//
-//#define TP_CS_PORT								GPIOE
-//#define TP_CS_PIN									T_CS_Pin
-//
-//#define TP_MISO_PORT							GPIOE
-//#define TP_MISO_PIN								T_MISO_Pin
-//
-//#define TP_MOSI_PORT							GPIOE
-//#define TP_MOSI_PIN								T_MOSI_Pin
-//
-//#define TP_IRQ_PORT								GPIOE
-//#define TP_IRQ_PIN								T_IRQ_Pin
+#define TP_CLK_PORT								GPIOB
+#define TP_CLK_PIN								T_CLK_Pin
+
+#define TP_CS_PORT								GPIOB
+#define TP_CS_PIN								T_CS_Pin
+
+#define TP_MISO_PORT							GPIOB
+#define TP_MISO_PIN								T_MISO_Pin
+
+#define TP_MOSI_PORT							GPIOB
+#define TP_MOSI_PIN								T_MOSI_Pin
+
+#define TP_IRQ_PORT								GPIOB
+#define TP_IRQ_PIN								T_IRQ_Pin
 
 #define CMD_RDY             			0X90
 #define CMD_RDX             			0XD0
