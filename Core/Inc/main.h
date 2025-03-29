@@ -33,6 +33,8 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "ILI9341_STM32_Driver.h"
+#include "ILI9341_Touchscreen.h"
+//#include "snow_tiger.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
