@@ -960,32 +960,32 @@ void StartTask01(void *argument)
 //	HAL_Delay(1000); // remain active for 0.5 second
 	osDelay(1);
 
-	Perfomance_Test();
-	osDelay(100);
-	Counting_Multiple_Segments_Test();
-	osDelay(100);
-	Counting_Single_Segments_Test();
-	osDelay(100);
-	Alignment_Test();
-	osDelay(100);
-	Lines_Example_Test();
-	osDelay(100);
-	Hollow_Circles_Test();
-	osDelay(100);
-	Filled_Circles_Test();
-	osDelay(100);
-	Hollow_Rectangles_Test();
-	osDelay(100);
-	Filled_Rectangles_Test();
-	osDelay(100);
-	Individual_Pixel_Test();
-	osDelay(100);
-	Individual2_Pixel_Test();
-	osDelay(100);
-	Colour_Test();
-	osDelay(100);
-	Image_Snow_Tiger_Test();
-	osDelay(100);
+//	Perfomance_Test();
+//	osDelay(100);
+//	Counting_Multiple_Segments_Test();
+//	osDelay(100);
+//	Counting_Single_Segments_Test();
+//	osDelay(100);
+//	Alignment_Test();
+//	osDelay(100);
+//	Lines_Example_Test();
+//	osDelay(100);
+//	Hollow_Circles_Test();
+//	osDelay(100);
+//	Filled_Circles_Test();
+//	osDelay(100);
+//	Hollow_Rectangles_Test();
+//	osDelay(100);
+//	Filled_Rectangles_Test();
+//	osDelay(100);
+//	Individual_Pixel_Test();
+//	osDelay(100);
+//	Individual2_Pixel_Test();
+//	osDelay(100);
+//	Colour_Test();
+//	osDelay(100);
+//	Image_Snow_Tiger_Test();
+//	osDelay(100);
   }
   /* USER CODE END 5 */
 }
@@ -1000,18 +1000,18 @@ void StartTask01(void *argument)
 void StartTask02(void *argument)
 {
   /* USER CODE BEGIN StartTask02 */
-//		ILI9341_Fill_Screen(WHITE);
-//		ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
-//		ILI9341_Draw_Text("Touchscreen", 10, 10, BLACK, 2, WHITE);
-//		ILI9341_Draw_Text("Touch to draw", 10, 30, BLACK, 2, WHITE);
-//		ILI9341_Set_Rotation(SCREEN_VERTICAL_1);
+		ILI9341_Fill_Screen(WHITE);
+		ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
+		ILI9341_Draw_Text("Touchscreen", 10, 10, BLACK, 2, WHITE);
+		ILI9341_Draw_Text("Touch to draw", 10, 30, BLACK, 2, WHITE);
+		ILI9341_Set_Rotation(SCREEN_VERTICAL_1);
 
   /* Infinite loop */
   for(;;)
   {
 	Task_action('2'); //sign of life by LED toggle or sending '1' to swo
 //	HAL_Delay(1000); // remain active for 0.5 second
-//	TouchScreen_Test();
+	TouchScreen_Test();
 	osDelay(1);
   }
   /* USER CODE END StartTask02 */

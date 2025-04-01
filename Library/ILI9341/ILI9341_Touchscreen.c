@@ -94,7 +94,7 @@ uint16_t TP_Read(void)
 
 				HAL_GPIO_WritePin(TP_CLK_PORT, TP_CLK_PIN, GPIO_PIN_SET);
 				HAL_GPIO_WritePin(TP_CLK_PORT, TP_CLK_PIN, GPIO_PIN_RESET);
-				for(uint8_t k=0;k<10;k++){}
+				for(uint16_t k=0;k<1;k++){}
         if(HAL_GPIO_ReadPin(TP_MISO_PORT, TP_MISO_PIN) != 0)
         {
             value++;
@@ -187,7 +187,16 @@ uint8_t TP_Read_Coordinates(uint16_t Coordinates[2])
 		//CONVERTING 16bit Value to Screen coordinates
     // 65535/273 = 240!
 		// 65535/204 = 320!
-    Coordinates[0] = ((240 - (rawx/X_TRANSLATION)) - X_OFFSET)*X_MAGNITUDE;
+		if(rawx>=32767u)
+		{
+			Coordinates[0] = ((360 - (rawx/X_TRANSLATION)) - X_OFFSET)*X_MAGNITUDE;
+		}
+		else
+		{
+			Coordinates[0] = ((120 - (rawx/X_TRANSLATION)) - X_OFFSET)*X_MAGNITUDE;
+		}
+//    Coordinates[0] = ((240 - (rawx/X_TRANSLATION)) - X_OFFSET)*X_MAGNITUDE;
+
 		Coordinates[1] = ((rawy/Y_TRANSLATION)- Y_OFFSET)*Y_MAGNITUDE;
 
 		return TOUCHPAD_DATA_OK;

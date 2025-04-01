@@ -113,9 +113,9 @@ if(TP_Touchpad_Pressed())
 #define TOUCHPAD_DATA_NOISY				0
 
 //HARDCODED CALIBRATION, CHANGE IF REQUIRED
-#define X_OFFSET									13
+#define X_OFFSET									-13//13
 #define Y_OFFSET									15
-#define X_MAGNITUDE								1.16
+#define X_MAGNITUDE								1.12
 #define Y_MAGNITUDE								1.16
 
 //CONVERTING 16bit Value to Screen coordinates
