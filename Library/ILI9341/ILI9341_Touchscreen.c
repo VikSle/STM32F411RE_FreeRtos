@@ -94,7 +94,7 @@ uint16_t TP_Read(void)
 
 				HAL_GPIO_WritePin(TP_CLK_PORT, TP_CLK_PIN, GPIO_PIN_SET);
 				HAL_GPIO_WritePin(TP_CLK_PORT, TP_CLK_PIN, GPIO_PIN_RESET);
-
+				for(uint8_t k=0;k<10;k++){}
         if(HAL_GPIO_ReadPin(TP_MISO_PORT, TP_MISO_PIN) != 0)
         {
             value++;

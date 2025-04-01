@@ -57,11 +57,35 @@ extern  SPI_HandleTypeDef                   hspi2;
 #define LCD_SPI_Recv_DMA(rd, ln)            BSP_ERROR_FEATURE_NOT_SUPPORTED
 #define LCD_SPI_SendRecv_DMA(td, rd, ln)    BSP_ERROR_FEATURE_NOT_SUPPORTED
 
+/* CS Pin mapping */
+#define LCD_CS_GPIO_PORT                    GPIOC
+#define LCD_CS_GPIO_PIN                     GPIO_PIN_1
+
+/* DCX Pin mapping */
+#define LCD_DCX_GPIO_PORT                   GPIOB
+#define LCD_DCX_GPIO_PIN                    GPIO_PIN_0
+
+/* RESET Pin mapping */
+#define LCD_RESET_GPIO_PORT                 GPIOC
+#define LCD_RESET_GPIO_PIN                  GPIO_PIN_0
+
 /* USER CODE BEGIN EC */
 
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
+/* Chip Reset macro definition */
+#define LCD_RST_LOW()                       WRITE_REG(GPIOC->BSRR, (uint32_t)GPIO_PIN_0 << 16)
+#define LCD_RST_HIGH()                      WRITE_REG(GPIOC->BSRR, GPIO_PIN_0)
+
+/* Chip Select macro definition */
+#define LCD_CS_LOW()                        WRITE_REG(GPIOC->BSRR, (uint32_t)GPIO_PIN_1 << 16)
+#define LCD_CS_HIGH()                       WRITE_REG(GPIOC->BSRR, GPIO_PIN_1)
+
+/* Data/Command macro definition */
+#define LCD_DC_LOW()                        WRITE_REG(GPIOB->BSRR, GPIO_PIN_0)
+#define LCD_DC_HIGH()                       WRITE_REG(GPIOB->BSRR, (uint32_t)GPIO_PIN_0 << 16)
+
 /* USER CODE BEGIN EM */
 
 /* USER CODE END EM */
