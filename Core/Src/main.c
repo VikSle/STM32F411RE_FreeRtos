@@ -22,7 +22,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "snow_tiger.h"
+#include "ILI9341_GFX.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -34,14 +35,22 @@
 /* USER CODE BEGIN PD */
 #define SWO_define (0u)
 #define USART_defined (1u)
+#define HAL_RNG_GetRandomNumber(hrng) GeneratePsuedoRandomNumber()
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+static uint16_t x = 0;
+static uint16_t y = 0;
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+ADC_HandleTypeDef hadc1;
+
+CRC_HandleTypeDef hcrc;
+
+TIM_HandleTypeDef htim1;
+
 UART_HandleTypeDef huart2;
 
 /* Definitions for Task01 */
@@ -59,18 +68,36 @@ const osThreadAttr_t Task02_attributes = {
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* USER CODE BEGIN PV */
-
+extern void ILI9341_myInit(void);
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_TIM1_Init(void);
+static void MX_ADC1_Init(void);
+static void MX_CRC_Init(void);
 void StartTask01(void *argument);
 void StartTask02(void *argument);
 
 /* USER CODE BEGIN PFP */
 void Task_action(char message);
+void Perfomance_Test(void);
+void Counting_Multiple_Segments_Test(void);
+void Counting_Single_Segments_Test(void);
+void Alignment_Test(void);
+void Lines_Example_Test(void);
+void Hollow_Circles_Test(void);
+void Filled_Circles_Test(void);
+void Hollow_Rectangles_Test(void);
+void Filled_Rectangles_Test(void);
+void Individual_Pixel_Test(void);
+void Individual2_Pixel_Test(void);
+void Colour_Test(void);
+void Image_Snow_Tiger_Test(void);
+void TouchScreen_Test(void);
+uint32_t GeneratePsuedoRandomNumber(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -108,7 +135,12 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
+  MX_TIM1_Init();
+  MX_ADC1_Init();
+  MX_CRC_Init();
   /* USER CODE BEGIN 2 */
+
+  ILI9341_myInit();
 
   /* USER CODE END 2 */
 
@@ -209,6 +241,130 @@ void SystemClock_Config(void)
 }
 
 /**
+  * @brief ADC1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_ADC1_Init(void)
+{
+
+  /* USER CODE BEGIN ADC1_Init 0 */
+
+  /* USER CODE END ADC1_Init 0 */
+
+  ADC_ChannelConfTypeDef sConfig = {0};
+
+  /* USER CODE BEGIN ADC1_Init 1 */
+
+  /* USER CODE END ADC1_Init 1 */
+
+  /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
+  */
+  hadc1.Instance = ADC1;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
+  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
+  hadc1.Init.ScanConvMode = DISABLE;
+  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.DiscontinuousConvMode = DISABLE;
+  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  hadc1.Init.NbrOfConversion = 1;
+  hadc1.Init.DMAContinuousRequests = DISABLE;
+  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+  if (HAL_ADC_Init(&hadc1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+  */
+  sConfig.Channel = ADC_CHANNEL_0;
+  sConfig.Rank = 1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN ADC1_Init 2 */
+
+  /* USER CODE END ADC1_Init 2 */
+
+}
+
+/**
+  * @brief CRC Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_CRC_Init(void)
+{
+
+  /* USER CODE BEGIN CRC_Init 0 */
+
+  /* USER CODE END CRC_Init 0 */
+
+  /* USER CODE BEGIN CRC_Init 1 */
+
+  /* USER CODE END CRC_Init 1 */
+  hcrc.Instance = CRC;
+  if (HAL_CRC_Init(&hcrc) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN CRC_Init 2 */
+
+  /* USER CODE END CRC_Init 2 */
+
+}
+
+/**
+  * @brief TIM1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM1_Init(void)
+{
+
+  /* USER CODE BEGIN TIM1_Init 0 */
+
+  /* USER CODE END TIM1_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM1_Init 1 */
+
+  /* USER CODE END TIM1_Init 1 */
+  htim1.Instance = TIM1;
+  htim1.Init.Prescaler = 10000;
+  htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim1.Init.Period = 65535;
+  htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV2;
+  htim1.Init.RepetitionCounter = 0;
+  htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim1, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM1_Init 2 */
+
+  /* USER CODE END TIM1_Init 2 */
+
+}
+
+/**
   * @brief USART2 Initialization Function
   * @param None
   * @retval None
@@ -259,7 +415,13 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOC, LCD_RESET_Pin|LCD_CS_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, LCD_DCX_Pin|T_CS_Pin|T_CLK_Pin|T_MOSI_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : B1_Pin */
   GPIO_InitStruct.Pin = B1_Pin;
@@ -267,12 +429,32 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
+  /*Configure GPIO pins : LCD_RESET_Pin LCD_CS_Pin */
+  GPIO_InitStruct.Pin = LCD_RESET_Pin|LCD_CS_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
   /*Configure GPIO pin : LD2_Pin */
   GPIO_InitStruct.Pin = LD2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : LCD_DCX_Pin T_CS_Pin T_CLK_Pin T_MOSI_Pin */
+  GPIO_InitStruct.Pin = LCD_DCX_Pin|T_CS_Pin|T_CLK_Pin|T_MOSI_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : T_IRQ_Pin T_MISO_Pin */
+  GPIO_InitStruct.Pin = T_IRQ_Pin|T_MISO_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
   HAL_NVIC_SetPriority(EXTI15_10_IRQn, 5, 0);
@@ -300,6 +482,465 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	Task_action('!');
 }
+void Perfomance_Test(void)
+{
+	ILI9341_Fill_Screen(WHITE);
+	ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
+	ILI9341_Draw_Text("FPS TEST, 40 loop 2 screens", 10, 10, BLACK, 1, WHITE);
+	HAL_Delay(2000);
+	ILI9341_Fill_Screen(WHITE);
+
+	uint32_t Timer_Counter = 0;
+	for(uint32_t j = 0; j < 2; j++)
+	{
+		HAL_TIM_Base_Start(&htim1);
+		for(uint16_t i = 0; i < 10; i++)
+		{
+			ILI9341_Fill_Screen(WHITE);
+			ILI9341_Fill_Screen(BLACK);
+		}
+
+		//20.000 per second!
+		HAL_TIM_Base_Stop(&htim1);
+		Timer_Counter += __HAL_TIM_GET_COUNTER(&htim1);
+		__HAL_TIM_SET_COUNTER(&htim1, 0);
+	}
+	Timer_Counter /= 2;
+
+	char counter_buff[30];
+	ILI9341_Fill_Screen(WHITE);
+	ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
+	sprintf(counter_buff, "Timer counter value: %u", (uint8_t)Timer_Counter*2);
+	ILI9341_Draw_Text(counter_buff, 10, 10, BLACK, 1, WHITE);
+
+	double seconds_passed = 2*((float)Timer_Counter / 20000);
+	sprintf(counter_buff, "Time: %.3f Sec", seconds_passed);
+	ILI9341_Draw_Text(counter_buff, 10, 30, BLACK, 2, WHITE);
+
+	double timer_float = 20/(((float)Timer_Counter)/20000);	//Frames per sec
+
+	sprintf(counter_buff, "FPS:  %.2f", timer_float);
+	ILI9341_Draw_Text(counter_buff, 10, 50, BLACK, 2, WHITE);
+	double MB_PS = timer_float*240*320*2/1000000;
+	sprintf(counter_buff, "MB/S: %.2f", MB_PS);
+	ILI9341_Draw_Text(counter_buff, 10, 70, BLACK, 2, WHITE);
+	double SPI_utilized_percentage = (MB_PS/(6.25 ))*100;		//50mbits / 8 bits
+	sprintf(counter_buff, "SPI Utilized: %.2f", SPI_utilized_percentage);
+	ILI9341_Draw_Text(counter_buff, 10, 90, BLACK, 2, WHITE);
+	HAL_Delay(10000);
+
+}
+void Counting_Multiple_Segments_Test(void)
+{
+	char Temp_Buffer_text[40];
+
+	ILI9341_Fill_Screen(WHITE);
+	ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
+	ILI9341_Draw_Text("Counting multiple segments at once", 10, 10, BLACK, 1, WHITE);
+	HAL_Delay(2000);
+	ILI9341_Fill_Screen(WHITE);
+
+
+	for(uint16_t i = 0; i <= 10; i++)
+	{
+	sprintf(Temp_Buffer_text, "Counting: %d", i);
+	ILI9341_Draw_Text(Temp_Buffer_text, 10, 10, BLACK, 2, WHITE);
+	ILI9341_Draw_Text(Temp_Buffer_text, 10, 30, BLUE, 2, WHITE);
+	ILI9341_Draw_Text(Temp_Buffer_text, 10, 50, RED, 2, WHITE);
+	ILI9341_Draw_Text(Temp_Buffer_text, 10, 70, GREEN, 2, WHITE);
+	ILI9341_Draw_Text(Temp_Buffer_text, 10, 90, BLACK, 2, WHITE);
+	ILI9341_Draw_Text(Temp_Buffer_text, 10, 110, BLUE, 2, WHITE);
+	ILI9341_Draw_Text(Temp_Buffer_text, 10, 130, RED, 2, WHITE);
+	ILI9341_Draw_Text(Temp_Buffer_text, 10, 150, GREEN, 2, WHITE);
+	ILI9341_Draw_Text(Temp_Buffer_text, 10, 170, WHITE, 2, BLACK);
+	ILI9341_Draw_Text(Temp_Buffer_text, 10, 190, BLUE, 2, BLACK);
+	ILI9341_Draw_Text(Temp_Buffer_text, 10, 210, RED, 2, BLACK);
+	}
+
+	HAL_Delay(1000);
+}
+void Counting_Single_Segments_Test(void)
+{
+	char Temp_Buffer_text[40];
+
+	ILI9341_Fill_Screen(WHITE);
+	ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
+	ILI9341_Draw_Text("Counting single segment", 10, 10, BLACK, 1, WHITE);
+	HAL_Delay(2000);
+	ILI9341_Fill_Screen(WHITE);
+
+	for(uint16_t i = 0; i <= 100; i++)
+	{
+	sprintf(Temp_Buffer_text, "Counting: %d", i);
+	ILI9341_Draw_Text(Temp_Buffer_text, 10, 10, BLACK, 3, WHITE);
+	}
+
+	HAL_Delay(1000);
+}
+void Alignment_Test(void)
+{
+	ILI9341_Fill_Screen(WHITE);
+	ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
+	ILI9341_Draw_Text("Rectangle alignment check", 10, 10, BLACK, 1, WHITE);
+	HAL_Delay(2000);
+	ILI9341_Fill_Screen(WHITE);
+
+	ILI9341_Draw_Hollow_Rectangle_Coord(50, 50, 100, 100, BLACK);
+	ILI9341_Draw_Filled_Rectangle_Coord(20, 20, 50, 50, BLACK);
+	ILI9341_Draw_Hollow_Rectangle_Coord(10, 10, 19, 19, BLACK);
+	HAL_Delay(1000);
+}
+void Lines_Example_Test(void)
+{
+	ILI9341_Fill_Screen(WHITE);
+	ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
+	ILI9341_Draw_Text("Randomly placed and sized", 10, 10, BLACK, 1, WHITE);
+	ILI9341_Draw_Text("Horizontal and Vertical lines", 10, 20, BLACK, 1, WHITE);
+	HAL_Delay(2000);
+	ILI9341_Fill_Screen(WHITE);
+
+	for(uint32_t i = 0; i < 30000; i++)
+	{
+		uint32_t random_num = 0;
+		uint16_t xr = 0;
+		uint16_t yr = 0;
+		uint16_t radiusr = 0;
+		uint16_t colourr = 0;
+		random_num = HAL_RNG_GetRandomNumber(&hrng);
+		xr = random_num;
+		random_num = HAL_RNG_GetRandomNumber(&hrng);
+		yr = random_num;
+		random_num = HAL_RNG_GetRandomNumber(&hrng);
+		radiusr = random_num;
+		random_num = HAL_RNG_GetRandomNumber(&hrng);
+		colourr = random_num;
+
+		xr &= 0x01FF;
+		yr &= 0x01FF;
+		radiusr &= 0x001F;
+		radiusr = (radiusr !=0) ? radiusr : 1;
+		//ili9341_drawpixel(xr, yr, WHITE);
+		ILI9341_Draw_Horizontal_Line(xr, yr, radiusr, colourr);
+		ILI9341_Draw_Vertical_Line(xr, yr, radiusr, colourr);
+	}
+
+	HAL_Delay(1000);
+}
+void Hollow_Circles_Test(void)
+{
+	ILI9341_Fill_Screen(WHITE);
+	ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
+	ILI9341_Draw_Text("Randomly placed and sized", 10, 10, BLACK, 1, WHITE);
+	ILI9341_Draw_Text("Circles", 10, 20, BLACK, 1, WHITE);
+	HAL_Delay(2000);
+	ILI9341_Fill_Screen(WHITE);
+
+
+	for(uint32_t i = 0; i < 3000; i++)
+	{
+		uint32_t random_num = 0;
+		uint16_t xr = 0;
+		uint16_t yr = 0;
+		uint16_t radiusr = 0;
+		uint16_t colourr = 0;
+		random_num = HAL_RNG_GetRandomNumber(&hrng);
+		xr = random_num;
+		random_num = HAL_RNG_GetRandomNumber(&hrng);
+		yr = random_num;
+		random_num = HAL_RNG_GetRandomNumber(&hrng);
+		radiusr = random_num;
+		random_num = HAL_RNG_GetRandomNumber(&hrng);
+		colourr = random_num;
+
+		xr &= 0x01FF;
+		yr &= 0x01FF;
+		radiusr &= 0x001F;
+		radiusr = (radiusr !=0) ? radiusr : 1;
+		//ili9341_drawpixel(xr, yr, WHITE);
+		ILI9341_Draw_Hollow_Circle(xr, yr, radiusr*2, colourr);
+	}
+	HAL_Delay(1000);
+}
+void Filled_Circles_Test(void)
+{
+	ILI9341_Fill_Screen(WHITE);
+	ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
+	ILI9341_Draw_Text("Randomly placed and sized", 10, 10, BLACK, 1, WHITE);
+	ILI9341_Draw_Text("Filled Circles", 10, 20, BLACK, 1, WHITE);
+	HAL_Delay(2000);
+	ILI9341_Fill_Screen(WHITE);
+
+	for(uint32_t i = 0; i < 1000; i++)
+	{
+		uint32_t random_num = 0;
+		uint16_t xr = 0;
+		uint16_t yr = 0;
+		uint16_t radiusr = 0;
+		uint16_t colourr = 0;
+		random_num = HAL_RNG_GetRandomNumber(&hrng);
+		xr = random_num;
+		random_num = HAL_RNG_GetRandomNumber(&hrng);
+		yr = random_num;
+		random_num = HAL_RNG_GetRandomNumber(&hrng);
+		radiusr = random_num;
+		random_num = HAL_RNG_GetRandomNumber(&hrng);
+		colourr = random_num;
+
+		xr &= 0x01FF;
+		yr &= 0x01FF;
+		radiusr &= 0x001F;
+		radiusr = (radiusr !=0) ? radiusr : 1;
+		//ili9341_drawpixel(xr, yr, WHITE);
+		ILI9341_Draw_Filled_Circle(xr, yr, radiusr/2, colourr);
+	}
+	HAL_Delay(1000);
+}
+void Hollow_Rectangles_Test(void)
+{
+	ILI9341_Fill_Screen(WHITE);
+	ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
+	ILI9341_Draw_Text("Randomly placed and sized", 10, 10, BLACK, 1, WHITE);
+	ILI9341_Draw_Text("Rectangles", 10, 20, BLACK, 1, WHITE);
+	HAL_Delay(2000);
+	ILI9341_Fill_Screen(WHITE);
+
+	for(uint32_t i = 0; i < 20000; i++)
+	{
+		uint32_t random_num = 0;
+		uint16_t xr = 0;
+		uint16_t yr = 0;
+		uint16_t radiusr = 0;
+		uint16_t colourr = 0;
+		random_num = HAL_RNG_GetRandomNumber(&hrng);
+		xr = random_num;
+		random_num = HAL_RNG_GetRandomNumber(&hrng);
+		yr = random_num;
+		random_num = HAL_RNG_GetRandomNumber(&hrng);
+		radiusr = random_num;
+		random_num = HAL_RNG_GetRandomNumber(&hrng);
+		colourr = random_num;
+
+		xr &= 0x01FF;
+		yr &= 0x01FF;
+		radiusr &= 0x001F;
+		radiusr = (radiusr !=0) ? radiusr : 1;
+		//ili9341_drawpixel(xr, yr, WHITE);
+		ILI9341_Draw_Hollow_Rectangle_Coord(xr, yr, xr+radiusr, yr+radiusr, colourr);
+	}
+	HAL_Delay(1000);
+}
+void Filled_Rectangles_Test(void)
+{
+	ILI9341_Fill_Screen(WHITE);
+	ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
+	ILI9341_Draw_Text("Randomly placed and sized", 10, 10, BLACK, 1, WHITE);
+	ILI9341_Draw_Text("Filled Rectangles", 10, 20, BLACK, 1, WHITE);
+	HAL_Delay(2000);
+	ILI9341_Fill_Screen(WHITE);
+
+	for(uint32_t i = 0; i < 20000; i++)
+	{
+		uint32_t random_num = 0;
+		uint16_t xr = 0;
+		uint16_t yr = 0;
+		uint16_t radiusr = 0;
+		uint16_t colourr = 0;
+		random_num = HAL_RNG_GetRandomNumber(&hrng);
+		xr = random_num;
+		random_num = HAL_RNG_GetRandomNumber(&hrng);
+		yr = random_num;
+		random_num = HAL_RNG_GetRandomNumber(&hrng);
+		radiusr = random_num;
+		random_num = HAL_RNG_GetRandomNumber(&hrng);
+		colourr = random_num;
+
+		xr &= 0x01FF;
+		yr &= 0x01FF;
+		radiusr &= 0x001F;
+		radiusr = (radiusr !=0) ? radiusr : 1;
+		//ili9341_drawpixel(xr, yr, WHITE);
+		ILI9341_Draw_Rectangle(xr, yr, radiusr, radiusr, colourr);
+	}
+	HAL_Delay(1000);
+}
+void Individual_Pixel_Test(void)
+{
+//	static uint16_t x = 0;
+//	static uint16_t y = 0;
+
+	ILI9341_Fill_Screen(WHITE);
+	ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
+	ILI9341_Draw_Text("Slow draw by selecting", 10, 10, BLACK, 1, WHITE);
+	ILI9341_Draw_Text("and adressing pixels", 10, 20, BLACK, 1, WHITE);
+	HAL_Delay(2000);
+	ILI9341_Fill_Screen(WHITE);
+
+	while (y < 240)
+	{
+	while ((x < 320) && (y < 240))
+	{
+
+		if(x % 2)
+		{
+			ILI9341_Draw_Pixel(x, y, BLACK);
+		}
+
+		x++;
+	}
+
+		y++;
+		x = 0;
+	}
+
+	x = 0;
+	y = 0;
+
+
+	while (y < 240)
+	{
+	while ((x < 320) && (y < 240))
+	{
+
+		if(y % 2)
+		{
+			ILI9341_Draw_Pixel(x, y, BLACK);
+		}
+
+		x++;
+	}
+
+		y++;
+		x = 0;
+	}
+	HAL_Delay(2000);
+}
+void Individual2_Pixel_Test(void)
+{
+	ILI9341_Fill_Screen(WHITE);
+	ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
+	ILI9341_Draw_Text("Random position and colour", 10, 10, BLACK, 1, WHITE);
+	ILI9341_Draw_Text("500000 pixels", 10, 20, BLACK, 1, WHITE);
+	HAL_Delay(2000);
+	ILI9341_Fill_Screen(WHITE);
+
+
+	for(uint32_t i = 0; i < 500000; i++)
+	{
+		uint32_t random_num = 0;
+		uint16_t xr = 0;
+		uint16_t yr = 0;
+		random_num = HAL_RNG_GetRandomNumber(&hrng);
+		xr = random_num;
+		random_num = HAL_RNG_GetRandomNumber(&hrng);
+		yr = random_num;
+		uint16_t color = HAL_RNG_GetRandomNumber(&hrng);
+
+		xr &= 0x01FF;
+		yr &= 0x01FF;
+		ILI9341_Draw_Pixel(xr, yr, color);
+	}
+	HAL_Delay(2000);
+}
+void Colour_Test(void)
+{
+	ILI9341_Fill_Screen(WHITE);
+	ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
+	ILI9341_Draw_Text("Colour gradient", 10, 10, BLACK, 1, WHITE);
+	ILI9341_Draw_Text("Grayscale", 10, 20, BLACK, 1, WHITE);
+	HAL_Delay(2000);
+
+
+	for(uint16_t i = 0; i <= (320); i++)
+	{
+		uint16_t Red = 0;
+		uint16_t Green = 0;
+		uint16_t Blue = 0;
+
+		Red = i/(10);
+		Red <<= 11;
+		Green = i/(5);
+		Green <<= 5;
+		Blue = i/(10);
+
+
+
+		uint16_t RGB_color = Red + Green + Blue;
+		ILI9341_Draw_Rectangle(i, x, 1, 240, RGB_color);
+
+	}
+	HAL_Delay(2000);
+}
+void Image_Snow_Tiger_Test(void)
+{
+	ILI9341_Fill_Screen(WHITE);
+	ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
+	ILI9341_Draw_Text("RGB Picture", 10, 10, BLACK, 1, WHITE);
+	ILI9341_Draw_Text("TIGER", 10, 20, BLACK, 1, WHITE);
+	HAL_Delay(2000);
+	ILI9341_Draw_Image((const char*)snow_tiger, SCREEN_VERTICAL_2);
+	ILI9341_Set_Rotation(SCREEN_VERTICAL_1);
+	HAL_Delay(10000);
+}
+void TouchScreen_Test(void)
+{
+	//put commented section in the task before inf loop
+//	ILI9341_Fill_Screen(WHITE);
+//	ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
+//	ILI9341_Draw_Text("Touchscreen", 10, 10, BLACK, 2, WHITE);
+//	ILI9341_Draw_Text("Touch to draw", 10, 30, BLACK, 2, WHITE);
+//	ILI9341_Set_Rotation(SCREEN_VERTICAL_1);
+//
+	if(TP_Touchpad_Pressed())
+	{
+		uint16_t x_pos = 0;
+		uint16_t y_pos = 0;
+
+		HAL_GPIO_WritePin(GPIOA, LD2_Pin, GPIO_PIN_SET);
+
+		uint16_t position_array[2];
+
+		if(TP_Read_Coordinates(position_array) == TOUCHPAD_DATA_OK)
+		{
+		x_pos = position_array[0];
+		y_pos = position_array[1];
+		ILI9341_Draw_Filled_Circle(x_pos, y_pos, 2, BLACK);
+
+		ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
+		char counter_buff[30];
+		sprintf(counter_buff, "POS X: %.3d", x_pos);
+		ILI9341_Draw_Text(counter_buff, 10, 80, BLACK, 2, WHITE);
+		sprintf(counter_buff, "POS Y: %.3d", y_pos);
+		ILI9341_Draw_Text(counter_buff, 10, 120, BLACK, 2, WHITE);
+		ILI9341_Set_Rotation(SCREEN_VERTICAL_1);
+		}
+
+		//ILI9341_Draw_Pixel(x_pos, y_pos, BLACK);
+
+	}
+	else
+	{
+		HAL_GPIO_WritePin(GPIOA, LD2_Pin, GPIO_PIN_RESET);
+	}
+
+}
+
+uint32_t GeneratePsuedoRandomNumber(void)
+{
+	uint32_t prng;
+	uint32_t adcres;
+	uint32_t tickres;
+
+	HAL_ADC_Start(&hadc1);
+	HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+	HAL_ADC_Stop(&hadc1);
+	adcres = HAL_ADC_GetValue(&hadc1)&0x1F;
+	tickres = HAL_GetTick();
+	prng = adcres*tickres;
+	prng = HAL_CRC_Calculate(&hcrc, &prng, 1);
+
+
+	return prng;
+}
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartTask01 */
@@ -316,7 +957,35 @@ void StartTask01(void *argument)
   for(;;)
   {
 	Task_action('1'); //sign of life by LED toggle or sending '1' to swo
-	HAL_Delay(1000); // remain active for 0.5 second
+//	HAL_Delay(1000); // remain active for 0.5 second
+	osDelay(1);
+
+//	Perfomance_Test();
+//	osDelay(100);
+//	Counting_Multiple_Segments_Test();
+//	osDelay(100);
+//	Counting_Single_Segments_Test();
+//	osDelay(100);
+//	Alignment_Test();
+//	osDelay(100);
+//	Lines_Example_Test();
+//	osDelay(100);
+//	Hollow_Circles_Test();
+//	osDelay(100);
+//	Filled_Circles_Test();
+//	osDelay(100);
+//	Hollow_Rectangles_Test();
+//	osDelay(100);
+//	Filled_Rectangles_Test();
+//	osDelay(100);
+//	Individual_Pixel_Test();
+//	osDelay(100);
+//	Individual2_Pixel_Test();
+//	osDelay(100);
+//	Colour_Test();
+//	osDelay(100);
+//	Image_Snow_Tiger_Test();
+//	osDelay(100);
   }
   /* USER CODE END 5 */
 }
@@ -331,11 +1000,19 @@ void StartTask01(void *argument)
 void StartTask02(void *argument)
 {
   /* USER CODE BEGIN StartTask02 */
+		ILI9341_Fill_Screen(WHITE);
+		ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
+		ILI9341_Draw_Text("Touchscreen", 10, 10, BLACK, 2, WHITE);
+		ILI9341_Draw_Text("Touch to draw", 10, 30, BLACK, 2, WHITE);
+		ILI9341_Set_Rotation(SCREEN_VERTICAL_1);
+
   /* Infinite loop */
   for(;;)
   {
 	Task_action('2'); //sign of life by LED toggle or sending '1' to swo
-	HAL_Delay(1000); // remain active for 0.5 second
+//	HAL_Delay(1000); // remain active for 0.5 second
+	TouchScreen_Test();
+	osDelay(1);
   }
   /* USER CODE END StartTask02 */
 }

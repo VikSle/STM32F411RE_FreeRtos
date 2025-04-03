@@ -29,9 +29,12 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
+#include "lcd_io.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "ILI9341_STM32_Driver.h"
+#include "ILI9341_Touchscreen.h"
+//#include "snow_tiger.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -60,12 +63,28 @@ void Error_Handler(void);
 #define B1_Pin GPIO_PIN_13
 #define B1_GPIO_Port GPIOC
 #define B1_EXTI_IRQn EXTI15_10_IRQn
+#define LCD_RESET_Pin GPIO_PIN_0
+#define LCD_RESET_GPIO_Port GPIOC
+#define LCD_CS_Pin GPIO_PIN_1
+#define LCD_CS_GPIO_Port GPIOC
 #define USART_TX_Pin GPIO_PIN_2
 #define USART_TX_GPIO_Port GPIOA
 #define USART_RX_Pin GPIO_PIN_3
 #define USART_RX_GPIO_Port GPIOA
 #define LD2_Pin GPIO_PIN_5
 #define LD2_GPIO_Port GPIOA
+#define LCD_DCX_Pin GPIO_PIN_0
+#define LCD_DCX_GPIO_Port GPIOB
+#define T_CS_Pin GPIO_PIN_1
+#define T_CS_GPIO_Port GPIOB
+#define T_CLK_Pin GPIO_PIN_2
+#define T_CLK_GPIO_Port GPIOB
+#define T_IRQ_Pin GPIO_PIN_13
+#define T_IRQ_GPIO_Port GPIOB
+#define T_MOSI_Pin GPIO_PIN_14
+#define T_MOSI_GPIO_Port GPIOB
+#define T_MISO_Pin GPIO_PIN_15
+#define T_MISO_GPIO_Port GPIOB
 #define TMS_Pin GPIO_PIN_13
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14
@@ -74,7 +93,7 @@ void Error_Handler(void);
 #define SWO_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
-
+extern SPI_HandleTypeDef hspi2;
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
