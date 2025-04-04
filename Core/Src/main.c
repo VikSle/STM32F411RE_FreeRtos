@@ -23,7 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "snow_tiger.h"
-#include "ILI9341_GFX.h"
+//#include "ILI9341_GFX.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -40,14 +40,19 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-static uint16_t x = 0;
-static uint16_t y = 0;
+static uint16_t x;
+static uint16_t y;
+static float temperatureAHT10_0 = 0.0f;
+static float humidityAHT10_0 = 0.0f;
+AHT10 aht10_id_00;
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 
 CRC_HandleTypeDef hcrc;
+
+I2C_HandleTypeDef hi2c1;
 
 TIM_HandleTypeDef htim1;
 
@@ -78,6 +83,7 @@ static void MX_USART2_UART_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_CRC_Init(void);
+static void MX_I2C1_Init(void);
 void StartTask01(void *argument);
 void StartTask02(void *argument);
 
@@ -138,10 +144,10 @@ int main(void)
   MX_TIM1_Init();
   MX_ADC1_Init();
   MX_CRC_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-
   ILI9341_myInit();
-
+  AHT10_Init(&aht10_id_00, &hi2c1);
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -315,6 +321,40 @@ static void MX_CRC_Init(void)
   /* USER CODE BEGIN CRC_Init 2 */
 
   /* USER CODE END CRC_Init 2 */
+
+}
+
+/**
+  * @brief I2C1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_I2C1_Init(void)
+{
+
+  /* USER CODE BEGIN I2C1_Init 0 */
+
+  /* USER CODE END I2C1_Init 0 */
+
+  /* USER CODE BEGIN I2C1_Init 1 */
+
+  /* USER CODE END I2C1_Init 1 */
+  hi2c1.Instance = I2C1;
+  hi2c1.Init.ClockSpeed = 100000;
+  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c1.Init.OwnAddress1 = 0;
+  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c1.Init.OwnAddress2 = 0;
+  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN I2C1_Init 2 */
+
+  /* USER CODE END I2C1_Init 2 */
 
 }
 
@@ -953,39 +993,21 @@ uint32_t GeneratePsuedoRandomNumber(void)
 void StartTask01(void *argument)
 {
   /* USER CODE BEGIN 5 */
+	char counter_buff[30];
+	ILI9341_Fill_Screen(WHITE);
+	ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
+	ILI9341_Draw_Text("DOMOWA STACJA METEO", 10, 10, BLACK, 2, WHITE);
+
   /* Infinite loop */
   for(;;)
   {
 	Task_action('1'); //sign of life by LED toggle or sending '1' to swo
-//	HAL_Delay(1000); // remain active for 0.5 second
-	osDelay(1);
 
-//	Perfomance_Test();
-//	osDelay(100);
-//	Counting_Multiple_Segments_Test();
-//	osDelay(100);
-//	Counting_Single_Segments_Test();
-//	osDelay(100);
-//	Alignment_Test();
-//	osDelay(100);
-//	Lines_Example_Test();
-//	osDelay(100);
-//	Hollow_Circles_Test();
-//	osDelay(100);
-//	Filled_Circles_Test();
-//	osDelay(100);
-//	Hollow_Rectangles_Test();
-//	osDelay(100);
-//	Filled_Rectangles_Test();
-//	osDelay(100);
-//	Individual_Pixel_Test();
-//	osDelay(100);
-//	Individual2_Pixel_Test();
-//	osDelay(100);
-//	Colour_Test();
-//	osDelay(100);
-//	Image_Snow_Tiger_Test();
-//	osDelay(100);
+	sprintf(counter_buff, "Temperatura  %.3f", temperatureAHT10_0);
+	ILI9341_Draw_Text(counter_buff, 10, 80, BLACK, 2, WHITE);
+	sprintf(counter_buff, "Wilgotnosc: %.3f", humidityAHT10_0);
+	ILI9341_Draw_Text(counter_buff, 10, 120, BLACK, 2, WHITE);
+	osDelay(100);
   }
   /* USER CODE END 5 */
 }
@@ -1000,19 +1022,29 @@ void StartTask01(void *argument)
 void StartTask02(void *argument)
 {
   /* USER CODE BEGIN StartTask02 */
-		ILI9341_Fill_Screen(WHITE);
-		ILI9341_Set_Rotation(SCREEN_HORIZONTAL_1);
-		ILI9341_Draw_Text("Touchscreen", 10, 10, BLACK, 2, WHITE);
-		ILI9341_Draw_Text("Touch to draw", 10, 30, BLACK, 2, WHITE);
-		ILI9341_Set_Rotation(SCREEN_VERTICAL_1);
-
   /* Infinite loop */
   for(;;)
   {
 	Task_action('2'); //sign of life by LED toggle or sending '1' to swo
-//	HAL_Delay(1000); // remain active for 0.5 second
-	TouchScreen_Test();
-	osDelay(1);
+
+	if(HAL_ERROR!=AHT10_RequestMeasurement(&aht10_id_00))
+	{
+		osDelay(100);
+	}
+	else
+	{
+		/* do nothing */
+	}
+	if(HAL_ERROR!=AHT10_ReadTempHumid(&aht10_id_00))
+	{
+		temperatureAHT10_0 = aht10_id_00.temp_C;
+		humidityAHT10_0 = aht10_id_00.humid_100;
+	}
+	else
+	{
+		/* do nothing */
+	}
+
   }
   /* USER CODE END StartTask02 */
 }
