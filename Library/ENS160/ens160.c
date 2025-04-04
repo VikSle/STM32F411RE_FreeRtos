@@ -113,7 +113,7 @@ HAL_StatusTypeDef ENS160_Read_DataStatus(ENS160 *dev)
 {
 	HAL_StatusTypeDef status = HAL_OK;
 
-	dev->status = ENS160_Read_Register(dev, ENS160_DEV_STATUS);
+	dev->status = ENS160_Read_Single_Register(dev, ENS160_DEV_STATUS);
 
 	return status;
 }

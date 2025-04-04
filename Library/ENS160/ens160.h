@@ -48,9 +48,9 @@ typedef struct {
 
 typedef struct{
 	I2C_HandleTypeDef *i2cHandle;	// I2C handle
-	uint16_t status;					// Status Byte
+	uint8_t status;					// Status Byte
 	uint8_t opMode;					// Operation Mode
-	uint8_t devID;					// Operation Mode
+	uint16_t devID;					// Operation Mode
 	SensorData data;
 } ENS160;
 

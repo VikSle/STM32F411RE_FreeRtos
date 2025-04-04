@@ -1119,7 +1119,7 @@ void StartTask02(void *argument)
 	{
 		temperatureAHT10_0 = aht10_id_00.temp_C;
 		humidityAHT10_0 = aht10_id_00.humid_100;
-		osDelay(1);
+		osDelay(100);
 	}
 	else
 	{
@@ -1141,8 +1141,6 @@ void StartTask02(void *argument)
 void StartTask03(void *argument)
 {
   /* USER CODE BEGIN StartTask03 */
-	uint16_t temp;
-	uint16_t humid;
   /* Infinite loop */
   for(;;)
   {
@@ -1154,7 +1152,6 @@ void StartTask03(void *argument)
 	}
 	else
 	{
-		/* do nothing */
 		osDelay(1);
 	}
 
@@ -1162,35 +1159,11 @@ void StartTask03(void *argument)
 	{
 		temperatureAHT21_0 = aht21_id_00.temp_C;
 		humidityAHT21_0 = aht21_id_00.humid_100;
-	}
-	else
-	{
-
-	}
-
-
-	temp = (uint16_t)aht10_id_00.temp_C;
-	humid = (uint16_t)aht10_id_00.humid_100;
-	if(HAL_ERROR!=ENS160_Update_Comp_Val(&ens160_id_00, temp, humid))
-	{
 		osDelay(100);
 	}
 	else
 	{
-		/* do nothing */
 		osDelay(1);
-	}
-
-
-
-	if(HAL_ERROR!=ENS160_Read_Datas(&ens160_id_00))
-	{
-		/* do nothing */
-	}
-
-	if(HAL_ERROR!=ENS160_Read_DataStatus(&ens160_id_00))
-	{
-		/* do nothing */
 	}
 
   }
@@ -1207,34 +1180,35 @@ void StartTask03(void *argument)
 void StartTask04(void *argument)
 {
   /* USER CODE BEGIN StartTask04 */
-//	uint16_t temp;
-//	uint16_t humid;
+	uint16_t temp;
+	uint16_t humid;
 
   /* Infinite loop */
   for(;;)
   {
 	Task_action('4'); //sign of life by LED toggle or sending '1' to swo
 
-//	temp = (uint16_t)aht21_id_00.temp_C;
-//	humid = (uint16_t)aht21_id_00.humid_100;
-//	if(HAL_ERROR!=ENS160_Update_Comp_Val(&ens160_id_00, temp, humid))
-//	{
-//		osDelay(100);
-//	}
-//	else
-//	{
-//		/* do nothing */
-//	}
-//
-//	if(HAL_ERROR!=ENS160_Read_Datas(&ens160_id_00))
-//	{
-//		osDelay(100);
-//	}
-//	else
-//	{
-//		/* do nothing */
-//	}
-	osDelay(100);
+	ENS160_Read_DataStatus(&ens160_id_00);
+	//osDelay(1);
+
+	temp = (uint16_t)aht21_id_00.temp_C;
+	humid = (uint16_t)aht21_id_00.humid_100;
+	if(HAL_ERROR!=ENS160_Update_Comp_Val(&ens160_id_00, temp, humid))
+	{
+		osDelay(100);
+	}
+	else
+	{
+		osDelay(1);
+	}
+	if(HAL_ERROR!=ENS160_Read_Datas(&ens160_id_00))
+	{
+		osDelay(100);
+	}
+	else
+	{
+		osDelay(1);
+	}
 
 
   }
