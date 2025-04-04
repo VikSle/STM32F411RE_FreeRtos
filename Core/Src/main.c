@@ -44,7 +44,10 @@ static uint16_t x;
 static uint16_t y;
 static float temperatureAHT10_0 = 0.0f;
 static float humidityAHT10_0 = 0.0f;
+static float temperatureAHT21_0 = 0.0f;
+static float humidityAHT21_0 = 0.0f;
 AHT10 aht10_id_00;
+AHT21 aht21_id_00;
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -53,6 +56,7 @@ ADC_HandleTypeDef hadc1;
 CRC_HandleTypeDef hcrc;
 
 I2C_HandleTypeDef hi2c1;
+I2C_HandleTypeDef hi2c3;
 
 TIM_HandleTypeDef htim1;
 
@@ -72,6 +76,13 @@ const osThreadAttr_t Task02_attributes = {
   .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
+/* Definitions for Task03 */
+osThreadId_t Task03Handle;
+const osThreadAttr_t Task03_attributes = {
+  .name = "Task03",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
 /* USER CODE BEGIN PV */
 extern void ILI9341_myInit(void);
 /* USER CODE END PV */
@@ -84,8 +95,10 @@ static void MX_TIM1_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_CRC_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_I2C3_Init(void);
 void StartTask01(void *argument);
 void StartTask02(void *argument);
+void StartTask03(void *argument);
 
 /* USER CODE BEGIN PFP */
 void Task_action(char message);
@@ -145,9 +158,11 @@ int main(void)
   MX_ADC1_Init();
   MX_CRC_Init();
   MX_I2C1_Init();
+  MX_I2C3_Init();
   /* USER CODE BEGIN 2 */
   ILI9341_myInit();
   AHT10_Init(&aht10_id_00, &hi2c1);
+  AHT21_Init(&aht21_id_00, &hi2c3);
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -175,6 +190,9 @@ int main(void)
 
   /* creation of Task02 */
   Task02Handle = osThreadNew(StartTask02, NULL, &Task02_attributes);
+
+  /* creation of Task03 */
+  Task03Handle = osThreadNew(StartTask03, NULL, &Task03_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -355,6 +373,40 @@ static void MX_I2C1_Init(void)
   /* USER CODE BEGIN I2C1_Init 2 */
 
   /* USER CODE END I2C1_Init 2 */
+
+}
+
+/**
+  * @brief I2C3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_I2C3_Init(void)
+{
+
+  /* USER CODE BEGIN I2C3_Init 0 */
+
+  /* USER CODE END I2C3_Init 0 */
+
+  /* USER CODE BEGIN I2C3_Init 1 */
+
+  /* USER CODE END I2C3_Init 1 */
+  hi2c3.Instance = I2C3;
+  hi2c3.Init.ClockSpeed = 100000;
+  hi2c3.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c3.Init.OwnAddress1 = 0;
+  hi2c3.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c3.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c3.Init.OwnAddress2 = 0;
+  hi2c3.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c3.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN I2C3_Init 2 */
+
+  /* USER CODE END I2C3_Init 2 */
 
 }
 
@@ -1006,7 +1058,11 @@ void StartTask01(void *argument)
 	sprintf(counter_buff, "Temperatura  %.3f", temperatureAHT10_0);
 	ILI9341_Draw_Text(counter_buff, 10, 80, BLACK, 2, WHITE);
 	sprintf(counter_buff, "Wilgotnosc: %.3f", humidityAHT10_0);
-	ILI9341_Draw_Text(counter_buff, 10, 120, BLACK, 2, WHITE);
+	ILI9341_Draw_Text(counter_buff, 10, 100, BLACK, 2, WHITE);
+	sprintf(counter_buff, "Temperatura  %.3f", temperatureAHT21_0);
+	ILI9341_Draw_Text(counter_buff, 10, 140, BLACK, 2, WHITE);
+	sprintf(counter_buff, "Wilgotnosc: %.3f", humidityAHT21_0);
+	ILI9341_Draw_Text(counter_buff, 10, 160, BLACK, 2, WHITE);
 	osDelay(100);
   }
   /* USER CODE END 5 */
@@ -1047,6 +1103,42 @@ void StartTask02(void *argument)
 
   }
   /* USER CODE END StartTask02 */
+}
+
+/* USER CODE BEGIN Header_StartTask03 */
+/**
+* @brief Function implementing the Task03 thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartTask03 */
+void StartTask03(void *argument)
+{
+  /* USER CODE BEGIN StartTask03 */
+  /* Infinite loop */
+  for(;;)
+  {
+	Task_action('3'); //sign of life by LED toggle or sending '1' to swo
+
+	if(HAL_ERROR!=AHT21_RequestMeasurement(&aht21_id_00))
+	{
+		osDelay(100);
+	}
+	else
+	{
+		/* do nothing */
+	}
+	if(HAL_ERROR!=AHT10_ReadTempHumid(&aht21_id_00))
+	{
+		temperatureAHT21_0 = aht21_id_00.temp_C;
+		humidityAHT21_0 = aht21_id_00.humid_100;
+	}
+	else
+	{
+		/* do nothing */
+	}
+  }
+  /* USER CODE END StartTask03 */
 }
 
 /**

@@ -36,6 +36,7 @@ extern "C" {
 #include "ILI9341_Touchscreen.h"
 #include "ILI9341_GFX.h"
 #include "AHT10.h"
+#include "AHT21.h"
 //#include "snow_tiger.h"
 /* USER CODE END Includes */
 
