@@ -37,6 +37,7 @@ extern "C" {
 #include "ILI9341_GFX.h"
 #include "AHT10.h"
 #include "AHT21.h"
+#include "ens160.h"
 //#include "snow_tiger.h"
 /* USER CODE END Includes */
 
