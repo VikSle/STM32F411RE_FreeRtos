@@ -1068,22 +1068,22 @@ void StartTask01(void *argument)
   {
 	Task_action('1'); //sign of life by LED toggle or sending '1' to swo
 
-	sprintf(counter_buff, "Temperatura  %.3f", temperatureAHT10_0);
+	sprintf(counter_buff, "Temperatura  %.2f C", temperatureAHT10_0);
 	ILI9341_Draw_Text(counter_buff, 10, 60, BLACK, 2, WHITE);
-	sprintf(counter_buff, "Wilgotnosc: %.3f", humidityAHT10_0);
+	sprintf(counter_buff, "Wilgotnosc: %.2f %%", humidityAHT10_0);
 	ILI9341_Draw_Text(counter_buff, 10, 80, BLACK, 2, WHITE);
-	sprintf(counter_buff, "Temperatura  %.3f", temperatureAHT21_0);
+	sprintf(counter_buff, "Temperatura  %.2f C", temperatureAHT21_0);
 	ILI9341_Draw_Text(counter_buff, 10, 120, BLACK, 2, WHITE);
-	sprintf(counter_buff, "Wilgotnosc: %.3f", humidityAHT21_0);
+	sprintf(counter_buff, "Wilgotnosc: %.2f %%", humidityAHT21_0);
 	ILI9341_Draw_Text(counter_buff, 10, 140, BLACK, 2, WHITE);
 
-	sprintf(counter_buff, "AQI  %u", ens160_id_00.data.AQI_data);
+	sprintf(counter_buff, "AQI:  %5u", ens160_id_00.data.AQI_data);
 	ILI9341_Draw_Text(counter_buff, 10, 160, BLACK, 2, WHITE);
-	sprintf(counter_buff, "ECO2: %u", ens160_id_00.data.ECO2_data);
+	sprintf(counter_buff, "ECO2: %5u", ens160_id_00.data.ECO2_data);
 	ILI9341_Draw_Text(counter_buff, 10, 180, BLACK, 2, WHITE);
-	sprintf(counter_buff, "TVOC: %u", ens160_id_00.data.TVOC_data);
+	sprintf(counter_buff, "TVOC: %5u", ens160_id_00.data.TVOC_data);
 	ILI9341_Draw_Text(counter_buff, 10, 200, BLACK, 2, WHITE);
-	sprintf(counter_buff, "STATUS: %x", ens160_id_00.status);
+	sprintf(counter_buff, "STATUS: 0x%2x", ens160_id_00.status);
 	ILI9341_Draw_Text(counter_buff, 10, 220, BLACK, 2, WHITE);
 
 	osDelay(100);
@@ -1182,34 +1182,47 @@ void StartTask04(void *argument)
   /* USER CODE BEGIN StartTask04 */
 	uint16_t temp;
 	uint16_t humid;
-
+	uint32_t counter=0;
   /* Infinite loop */
   for(;;)
   {
 	Task_action('4'); //sign of life by LED toggle or sending '1' to swo
 
-	ENS160_Read_DataStatus(&ens160_id_00);
-	//osDelay(1);
-
-	temp = (uint16_t)aht21_id_00.temp_C;
-	humid = (uint16_t)aht21_id_00.humid_100;
-	if(HAL_ERROR!=ENS160_Update_Comp_Val(&ens160_id_00, temp, humid))
+	switch(counter)
 	{
-		osDelay(100);
+		case 10: /* compensation */
+		{
+			temp = (uint16_t)aht21_id_00.temp_C;
+			humid = (uint16_t)aht21_id_00.humid_100;
+			ENS160_Update_Comp_Val(&ens160_id_00, temp, humid);
+			osDelay(10);
+
+		}break;
+		case 20: /* measurement data read */
+		{
+			ens160_id_00.data.AQI_data 	= ENS160_Read_Single_Register(&ens160_id_00, ENS160_DATA_AQI);
+			osDelay(1);
+			ens160_id_00.data.ECO2_data =	ENS160_Read_Register(&ens160_id_00, ENS160_DATA_ECO2);
+			osDelay(1);
+			ens160_id_00.data.TVOC_data = ENS160_Read_Register(&ens160_id_00, ENS160_DATA_TVOC);
+			osDelay(8);
+		}break;
+		default: /* check ststud */
+		{
+			/* read status each 10 ms, but skip if compenastion or meas read*/
+			ENS160_Read_DataStatus(&ens160_id_00);
+			osDelay(10);
+		}
+	}
+
+	if(counter<20)
+	{
+		counter++;
 	}
 	else
 	{
-		osDelay(1);
+		counter = 0;
 	}
-	if(HAL_ERROR!=ENS160_Read_Datas(&ens160_id_00))
-	{
-		osDelay(100);
-	}
-	else
-	{
-		osDelay(1);
-	}
-
 
   }
   /* USER CODE END StartTask04 */
