@@ -39,6 +39,9 @@ extern "C" {
 #include "AHT21.h"
 #include "ens160.h"
 //#include "snow_tiger.h"
+#include "NRF24_conf.h"
+#include "NRF24.h"
+#include "NRF24_reg_addresses.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -77,27 +80,41 @@ void Error_Handler(void);
 #define USART_RX_GPIO_Port GPIOA
 #define LD2_Pin GPIO_PIN_5
 #define LD2_GPIO_Port GPIOA
+#define NRF_IRQ_Pin GPIO_PIN_5
+#define NRF_IRQ_GPIO_Port GPIOC
+#define NRF_IRQ_EXTI_IRQn EXTI9_5_IRQn
 #define LCD_DCX_Pin GPIO_PIN_0
 #define LCD_DCX_GPIO_Port GPIOB
 #define T_CS_Pin GPIO_PIN_1
 #define T_CS_GPIO_Port GPIOB
 #define T_CLK_Pin GPIO_PIN_2
 #define T_CLK_GPIO_Port GPIOB
+#define NRF_SCK_Pin GPIO_PIN_12
+#define NRF_SCK_GPIO_Port GPIOB
 #define T_IRQ_Pin GPIO_PIN_13
 #define T_IRQ_GPIO_Port GPIOB
 #define T_MOSI_Pin GPIO_PIN_14
 #define T_MOSI_GPIO_Port GPIOB
 #define T_MISO_Pin GPIO_PIN_15
 #define T_MISO_GPIO_Port GPIOB
+#define NRF_CE_Pin GPIO_PIN_6
+#define NRF_CE_GPIO_Port GPIOC
+#define NRF_CS_Pin GPIO_PIN_8
+#define NRF_CS_GPIO_Port GPIOC
 #define TMS_Pin GPIO_PIN_13
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14
 #define TCK_GPIO_Port GPIOA
+#define NRF_MISO_Pin GPIO_PIN_11
+#define NRF_MISO_GPIO_Port GPIOC
+#define NRF_MOSI_Pin GPIO_PIN_12
+#define NRF_MOSI_GPIO_Port GPIOC
 #define SWO_Pin GPIO_PIN_3
 #define SWO_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 extern SPI_HandleTypeDef hspi2;
+extern SPI_HandleTypeDef hspi3;
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

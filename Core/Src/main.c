@@ -45,6 +45,11 @@ static float humidityAHT21_0 = 0.0f;
 AHT10 aht10_id_00;
 AHT21 aht21_id_00;
 ENS160 ens160_id_00;
+
+extern uint8_t nrf_irq;
+extern uint8_t dataR[PLD_S];
+extern uint8_t rx_ack_pld[PLD_S];
+extern uint16_t nrf_data;
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -54,6 +59,8 @@ CRC_HandleTypeDef hcrc;
 
 I2C_HandleTypeDef hi2c1;
 I2C_HandleTypeDef hi2c3;
+
+SPI_HandleTypeDef hspi3;
 
 TIM_HandleTypeDef htim1;
 
@@ -94,6 +101,13 @@ const osThreadAttr_t Task05_attributes = {
   .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
+/* Definitions for Task06 */
+osThreadId_t Task06Handle;
+const osThreadAttr_t Task06_attributes = {
+  .name = "Task06",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
 /* USER CODE BEGIN PV */
 extern void ILI9341_myInit(void);
 /* USER CODE END PV */
@@ -107,11 +121,13 @@ static void MX_ADC1_Init(void);
 static void MX_CRC_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_I2C3_Init(void);
+static void MX_SPI3_Init(void);
 void StartTask01(void *argument);
 void StartTask02(void *argument);
 void StartTask03(void *argument);
 void StartTask04(void *argument);
 void StartTask05(void *argument);
+void StartTask06(void *argument);
 
 /* USER CODE BEGIN PFP */
 void Task_action(char message);
@@ -158,11 +174,13 @@ int main(void)
   MX_CRC_Init();
   MX_I2C1_Init();
   MX_I2C3_Init();
+  MX_SPI3_Init();
   /* USER CODE BEGIN 2 */
   ILI9341_myInit();
   AHT10_Init(&aht10_id_00, &hi2c1);
   AHT21_Init(&aht21_id_00, &hi2c3);
   ENS160_Init(&ens160_id_00, &hi2c3);
+  NRF24L01_Init();
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -199,6 +217,9 @@ int main(void)
 
   /* creation of Task05 */
   Task05Handle = osThreadNew(StartTask05, NULL, &Task05_attributes);
+
+  /* creation of Task06 */
+  Task06Handle = osThreadNew(StartTask06, NULL, &Task06_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -417,6 +438,44 @@ static void MX_I2C3_Init(void)
 }
 
 /**
+  * @brief SPI3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_SPI3_Init(void)
+{
+
+  /* USER CODE BEGIN SPI3_Init 0 */
+
+  /* USER CODE END SPI3_Init 0 */
+
+  /* USER CODE BEGIN SPI3_Init 1 */
+
+  /* USER CODE END SPI3_Init 1 */
+  /* SPI3 parameter configuration*/
+  hspi3.Instance = SPI3;
+  hspi3.Init.Mode = SPI_MODE_MASTER;
+  hspi3.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi3.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi3.Init.NSS = SPI_NSS_SOFT;
+  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
+  hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  hspi3.Init.CRCPolynomial = 10;
+  if (HAL_SPI_Init(&hspi3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN SPI3_Init 2 */
+
+  /* USER CODE END SPI3_Init 2 */
+
+}
+
+/**
   * @brief TIM1 Initialization Function
   * @param None
   * @retval None
@@ -513,7 +572,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, LCD_RESET_Pin|LCD_CS_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, LCD_RESET_Pin|LCD_CS_Pin|NRF_CE_Pin|NRF_CS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
@@ -527,8 +586,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LCD_RESET_Pin LCD_CS_Pin */
-  GPIO_InitStruct.Pin = LCD_RESET_Pin|LCD_CS_Pin;
+  /*Configure GPIO pins : LCD_RESET_Pin LCD_CS_Pin NRF_CE_Pin NRF_CS_Pin */
+  GPIO_InitStruct.Pin = LCD_RESET_Pin|LCD_CS_Pin|NRF_CE_Pin|NRF_CS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
@@ -540,6 +599,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : NRF_IRQ_Pin */
+  GPIO_InitStruct.Pin = NRF_IRQ_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(NRF_IRQ_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LCD_DCX_Pin T_CS_Pin T_CLK_Pin T_MOSI_Pin */
   GPIO_InitStruct.Pin = LCD_DCX_Pin|T_CS_Pin|T_CLK_Pin|T_MOSI_Pin;
@@ -555,6 +620,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+
   HAL_NVIC_SetPriority(EXTI15_10_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
@@ -578,7 +646,14 @@ void Task_action(char message)
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-	Task_action('!');
+	if(GPIO_Pin == GPIO_PIN_5){
+		nrf_irq = 1;
+	}
+
+	if(GPIO_Pin == GPIO_PIN_13){
+		Task_action('!');
+	}
+
 }
 
 uint32_t GeneratePsuedoRandomNumber(void)
@@ -797,6 +872,38 @@ void StartTask05(void *argument)
     osDelay(500);
   }
   /* USER CODE END StartTask05 */
+}
+
+/* USER CODE BEGIN Header_StartTask06 */
+/**
+* @brief Function implementing the Task06 thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartTask06 */
+void StartTask06(void *argument)
+{
+  /* USER CODE BEGIN StartTask06 */
+	uint8_t stat;
+  /* Infinite loop */
+  for(;;)
+  {
+	nrf24_listen();
+	if(nrf_irq == 1)
+	{
+		stat = nrf24_r_status();
+		if(stat & (1 << RX_DR))
+		{
+			nrf24_receive(dataR, sizeof(dataR));
+			nrf24_transmit_rx_ack_pld(0, rx_ack_pld, sizeof(rx_ack_pld));
+		}
+		nrf_data = nrf24_uint8_t_to_type(dataR, sizeof(dataR));
+	}
+
+	osDelay(1);
+
+  }
+  /* USER CODE END StartTask06 */
 }
 
 /**
