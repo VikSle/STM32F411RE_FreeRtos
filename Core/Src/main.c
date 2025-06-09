@@ -87,6 +87,13 @@ const osThreadAttr_t Task04_attributes = {
   .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
+/* Definitions for Task05 */
+osThreadId_t Task05Handle;
+const osThreadAttr_t Task05_attributes = {
+  .name = "Task05",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
 /* USER CODE BEGIN PV */
 extern void ILI9341_myInit(void);
 /* USER CODE END PV */
@@ -104,6 +111,7 @@ void StartTask01(void *argument);
 void StartTask02(void *argument);
 void StartTask03(void *argument);
 void StartTask04(void *argument);
+void StartTask05(void *argument);
 
 /* USER CODE BEGIN PFP */
 void Task_action(char message);
@@ -188,6 +196,9 @@ int main(void)
 
   /* creation of Task04 */
   Task04Handle = osThreadNew(StartTask04, NULL, &Task04_attributes);
+
+  /* creation of Task05 */
+  Task05Handle = osThreadNew(StartTask05, NULL, &Task05_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -767,6 +778,25 @@ void StartTask04(void *argument)
 
   }
   /* USER CODE END StartTask04 */
+}
+
+/* USER CODE BEGIN Header_StartTask05 */
+/**
+* @brief Function implementing the Task05 thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartTask05 */
+void StartTask05(void *argument)
+{
+  /* USER CODE BEGIN StartTask05 */
+  /* Infinite loop */
+  for(;;)
+  {
+	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+    osDelay(500);
+  }
+  /* USER CODE END StartTask05 */
 }
 
 /**
