@@ -50,6 +50,7 @@ extern uint8_t nrf_irq;
 extern uint8_t dataR[PLD_S];
 extern uint8_t rx_ack_pld[PLD_S];
 extern uint16_t nrf_data;
+static float temperatureAHT10_1 = 0.0f;
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -699,7 +700,7 @@ void StartTask01(void *argument)
 	ILI9341_Draw_Text(counter_buff, 10, 60, BLACK, 2, WHITE);
 	sprintf(counter_buff, "Wilgotnosc: %.2f %%", humidityAHT10_0);
 	ILI9341_Draw_Text(counter_buff, 10, 80, BLACK, 2, WHITE);
-	sprintf(counter_buff, "Temperatura  %.2f C", temperatureAHT21_0);
+	sprintf(counter_buff, "Temperatura  %.2f C", temperatureAHT10_1);
 	ILI9341_Draw_Text(counter_buff, 10, 120, BLACK, 2, WHITE);
 	sprintf(counter_buff, "Wilgotnosc: %.2f %%", humidityAHT21_0);
 	ILI9341_Draw_Text(counter_buff, 10, 140, BLACK, 2, WHITE);
@@ -897,11 +898,12 @@ void StartTask06(void *argument)
 			nrf24_receive(dataR, sizeof(dataR));
 			nrf24_transmit_rx_ack_pld(0, rx_ack_pld, sizeof(rx_ack_pld));
 		}
-		nrf_data = nrf24_uint8_t_to_type(dataR, sizeof(dataR));
 	}
 
-	osDelay(1);
+	nrf_data = nrf24_uint8_t_to_type(dataR, sizeof(dataR));
+	temperatureAHT10_1 = ((float)nrf_data)/100.0f;
 
+	osDelay(1);
   }
   /* USER CODE END StartTask06 */
 }

@@ -11,7 +11,8 @@
 
 /* NRF24L01 - start */
 
-uint8_t tx_addr[5] = {0x45, 0x55, 0x67, 0x10, 0x21};
+uint8_t tx_addr[5] = {0x11, 0x22, 0x23, 0x24, 0x25};
+//uint8_t rx_addr[5] = {0x01, 0x02, 0x03, 0x04, 0x05};
 uint16_t nrf_data = 0;
 uint8_t rx_ack_pld[PLD_S] = {"OK"};
 volatile uint8_t nrf_irq = 0;
