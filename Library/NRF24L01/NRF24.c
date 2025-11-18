@@ -12,7 +12,7 @@
 /* NRF24L01 - start */
 
 uint8_t tx_addr[5] = {0x11, 0x22, 0x23, 0x24, 0x25};
-//uint8_t rx_addr[5] = {0x01, 0x02, 0x03, 0x04, 0x05};
+uint8_t rx_addr[5] = {0x01, 0x02, 0x03, 0x04, 0x05};
 uint16_t nrf_data = 0;
 uint8_t rx_ack_pld[PLD_S] = {"OK"};
 volatile uint8_t nrf_irq = 0;
@@ -573,6 +573,9 @@ void nrf24_defaults(void){
 
 void nrf24_init(void){
 
+	nrf24_defaults();
+	HAL_Delay(10);
+
 	nrf24_pwr_up();
 
 	nrf24_flush_tx();
@@ -586,14 +589,13 @@ void nrf24_init(void){
 void NRF24L01_Init(void)
 {
 	csn_high();
-
-	HAL_Delay(5);
-
 	ce_low();
+
+	HAL_Delay(10);
 
 	nrf24_init();
 
-	nrf24_listen();
+//	nrf24_listen();
 
 	nrf24_auto_ack_all(auto_ack);
 	nrf24_en_ack_pld(enable);

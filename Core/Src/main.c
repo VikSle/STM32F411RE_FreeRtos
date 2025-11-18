@@ -869,6 +869,7 @@ void StartTask05(void *argument)
   /* Infinite loop */
   for(;;)
   {
+	Task_action('5');
 	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
     osDelay(500);
   }
@@ -889,12 +890,14 @@ void StartTask06(void *argument)
   /* Infinite loop */
   for(;;)
   {
+	Task_action('6');
 	nrf24_listen();
 	if(nrf_irq == 1)
 	{
 		stat = nrf24_r_status();
 		if(stat & (1 << RX_DR))
 		{
+			Task_action('R');
 			nrf24_receive(dataR, sizeof(dataR));
 			nrf24_transmit_rx_ack_pld(0, rx_ack_pld, sizeof(rx_ack_pld));
 		}
