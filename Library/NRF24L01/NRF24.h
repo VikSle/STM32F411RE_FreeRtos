@@ -8,7 +8,7 @@
 #ifndef NRF_24_H
 #define NRF_24_H
 
-#define PLD_S 2 //payload size should be equal to ack_payload size if DPL is not enabled
+#define PLD_S 4 //payload size should be equal to ack_payload size if DPL is not enabled
 
 enum data_rate {
 	_1mbps   = 0,

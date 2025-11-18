@@ -42,6 +42,7 @@ extern "C" {
 #include "NRF24_conf.h"
 #include "NRF24.h"
 #include "NRF24_reg_addresses.h"
+#include "string.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
